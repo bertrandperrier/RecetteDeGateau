@@ -1,5 +1,5 @@
 ## Script réalisé par Bertrand Perrier le 17/05/07
- 
+
 while [ 1 ]; do
  
 while [ "$ANSWER" != "1" ] && [ "$ANSWER" != "2" ]; do
@@ -15,10 +15,10 @@ done
 if [ $ANSWER = 1 ]
    then
 	echo "===compression en cours==="
-	sudo zip -r /home/bertrand/backup/www.zip /var/www/**
+	sudo zip -r /home/$USER/backup/www.zip /var/www/**
 	echo "===compression terminé==="
 	echo "===chmod 777 en cours==="
-	sudo chmod 777 /home/bertrand/backup/www.zip
+	sudo chmod 777 /home/$USER/backup/www.zip
 	echo "===chmod 777 terminé==="
 
    fi
