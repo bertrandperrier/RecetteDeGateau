@@ -1,44 +1,35 @@
 # -*- coding: utf8 -*-
 import sys
 
-s = raw_input('Saissisez le nombre de lignes et de colonnes [L C]-->')
-s=s.split(' ')
-try:
-	nb_ligne=int(s[0])
-	nb_colonne=int(s[1])
-except:
-	print "erreur saisie : nombres non détectés"
-	sys.exit(1)
-
-if len(s)> 2:
-	print "erreur saisie : plus de deux chiffres saisies"
-	sys.exit(1)
-
-colonne=[]
-for i in range(nb_ligne):
-	while True:
-		print "ligne n°"+str(i)
-		temp=(raw_input('-->'))
-		temp_s=temp.split()
-		# print "nb colonne "+str(nb_colonne)
-		if len(temp)==nb_colonne:
-			colonne.extend(temp_s)
-			break
-		print "erreur : "+str(nb_colonne)+" colonnes demandées"
-"""
-nb_colonne = 7
-nb_ligne = 9
-colonne = ["kdofjek","d.er.g.",".e.sf..","..qdsf.",".e...d.","d.e.f.q",".....d.",".u..i.o",".p.m..."]
-nb_colonne = 5
-nb_ligne = 5
-colonne = ["yafdj","..e.k","...a.","...f.","....."]
-nb_colonne = 3
-nb_ligne = 3
-colonne = ["ydj","e.k","..."]
-nb_colonne = 4
-nb_ligne = 4
-colonne = ["yfdj","...k","..a.","..f."]
-"""
+s = raw_input('Saissisez le nombre de lignes et de colonnes [L C] ou [demo]-->')
+if s=="demo":
+	nb_colonne = 7
+	nb_ligne = 9
+	colonne = ["kdofjek","d.er.g.",".e.sf..","..qdsf.",".e...d.","d.e.f.q",".....d.",".u..i.o",".p.m..."]
+else:
+	s=s.split(' ')
+	try:
+		nb_ligne=int(s[0])
+		nb_colonne=int(s[1])
+	except:
+		print "erreur saisie : nombres non détectés"
+		sys.exit(1)
+	
+	if len(s)> 2:
+		print "erreur saisie : plus de deux chiffres saisies"
+		sys.exit(1)
+	
+	colonne=[]
+	for i in range(nb_ligne):
+		while True:
+			print "ligne n°"+str(i)
+			temp=(raw_input('-->'))
+			temp_s=temp.split()
+			if len(temp)==nb_colonne:
+				colonne.extend(temp_s)
+				break
+			print "erreur : "+str(nb_colonne)+" colonnes demandées"
+	
 print ""
 print "origine"
 print "-------"
