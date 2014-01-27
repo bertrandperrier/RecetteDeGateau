@@ -2,7 +2,7 @@
 const int pinStart = 9;
 const int pinData = 8;
 
-const int speedDial = 10;
+const int speedDial = 1;
 
 bool bit0;
 bool bit1;
@@ -51,6 +51,7 @@ void loop()
     delay(10*speedDial);
     digitalWrite(pinData, LOW);
     delay(20*speedDial);
+    delay(200);
     }
   delay(1000);
 }

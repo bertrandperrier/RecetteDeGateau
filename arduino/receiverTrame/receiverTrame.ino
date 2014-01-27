@@ -17,7 +17,7 @@ void setup()
   pinMode(pinStart, INPUT);
   pinMode(pinData, INPUT);  
   lcd.setCursor(0, 0);
-  lcd.print(" num bit : 0123");
+  lcd.print("BitOrderMSBFIRST");
   }
 
 void loop()
@@ -25,19 +25,22 @@ void loop()
   if (digitalRead(pinStart))
     {
     lcd.setCursor(0, 1);
-    lcd.print("etat bit : ----");
-    lcd.setCursor(11, 1);
+    lcd.print("state bit : ");
+
+    
     delay(10*speedDial);
-    lcd.print(digitalRead(pinData));
+    bit0=digitalRead(pinData);
     delay(10*speedDial);
-    lcd.setCursor(12, 1);
-    lcd.print(digitalRead(pinData));
+    bit1=digitalRead(pinData);
     delay(10*speedDial);
-    lcd.setCursor(13, 1);
-    lcd.print(digitalRead(pinData));
+    bit2=digitalRead(pinData);
     delay(10*speedDial);
-    lcd.setCursor(14, 1);
-    lcd.print(digitalRead(pinData));
+    bit3=digitalRead(pinData);
+    
+    lcd.print(bit0);
+    lcd.print(bit1);
+    lcd.print(bit2);
+    lcd.print(bit3);
     }
   }
 
