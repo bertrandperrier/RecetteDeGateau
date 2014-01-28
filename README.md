@@ -12,27 +12,25 @@ xclip -sel clip <~/.ssh/id_rsa.pub
 
 sudo apt-get install git
 
-git config --global user.name "<prénom> <nom>"
+git config --global user.name "prénom nom"
 
-git config --global user.email <email>
+git config --global user.email email
 
 git config --global core.editor geany
 
 git config --list
 
-mkdir <rep de travail>
+mkdir -rep de travail-
 
-cd <rep de travail>
+cd -rep de travail-
 
-git clone git@github.com:<url>.git
+git clone git@github.com:-url-.git
 
 use
 ---
 cd git folder's
 
-git pull
-
-// modifier les fichiers
+git pull  // modifier les fichiers
 
 git add <fichier ou dossier>
 
