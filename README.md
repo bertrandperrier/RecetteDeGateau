@@ -67,9 +67,9 @@ Aborting
 
 $ git commit -m "maj"
 
-# Changes not staged for commit:
+Changes not staged for commit:
 
-#	modified:   README.md
+modified:   README.md
 
 no changes added to commit (use "git add" and/or "git commit -a")
 
@@ -109,6 +109,6 @@ Total 6 (delta 2)
 
 $ git status
 
-# On branch master
+On branch master
 
 nothing to commit (working directory clean)
