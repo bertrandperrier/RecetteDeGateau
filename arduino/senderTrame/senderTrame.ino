@@ -10,11 +10,11 @@ void setup()
 
 void loop()
   {
-  for (int val_bin=0;val_bin<=bit(15);val_bin++)  // de 0 à bit(15)
+  for (int val_bin=0;val_bin<=bit(15);val_bin++)  // de 0 à 11111111
     {
     for (int num_bit=0;num_bit<=15;num_bit++) // de 0 à 15 bit
       {
-      trame[7-num_bit] = HIGH && (val_bin & bit(num_bit)); // bit -> 2pn  
+      trame[num_bit] = HIGH && (val_bin & bit(num_bit)); // bit -> 2pn  //7-
       }
     digitalWrite(pinData, HIGH); // bit depart
     delay(8*speedDial);
