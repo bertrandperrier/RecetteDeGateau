@@ -42,4 +42,4 @@ git push
 
 pour revenir à la version du dépot
 
-git checkout -- <url fichier>
+git checkout -- -url fichier-
