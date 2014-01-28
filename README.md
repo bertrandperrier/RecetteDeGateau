@@ -5,7 +5,7 @@ tuto git
 ========
 clone
 -------
-ssh-keygen -t rsa -C "<email>"
+ssh-keygen -t rsa -C "email"
 
 sudo apt-get install xclip
 
@@ -31,7 +31,7 @@ use
 ---
 cd git folder's
 
-//pour vérifier que le dépot n'a pas été modifié
+// pour vérifier que le dépot n'a pas été modifié
 
 git pull
 
@@ -45,6 +45,6 @@ git commit -m "comment"
 
 git push
 
-pour revenir à la version du dépot
+// pour revenir à la version du dépot
 
 git checkout -- -url fichier-
