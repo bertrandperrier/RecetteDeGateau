@@ -30,6 +30,8 @@ use
 ---
 cd git folder's
 
+//pour vérifier que le dépot n'a pas été modifié
+
 git pull
 
 // modifier les fichiers
