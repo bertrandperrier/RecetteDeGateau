@@ -25,3 +25,6 @@ git add <fichier ou dossier>
 git status
 git commit -m "comment"
 git push
+
+pour revenir à la version du dépot
+git checkout -- <url fichier>
