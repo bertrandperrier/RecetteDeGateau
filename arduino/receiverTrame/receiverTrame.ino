@@ -1,7 +1,6 @@
 // /dev/ttyUSB0
 #include <LiquidCrystal.h>
-const int pinData = 4;
-const int pinStart = 2;
+const int pinData = 4; // 2
 const int speedDial = 1;
 bool bit0=false;
 bool bit1=false;
@@ -18,21 +17,20 @@ void setup()
   {
   //attachInterrupt(0, receiveTrame, FALLING);
   lcd.begin(16, 2);
-  pinMode(pinStart, INPUT);
-  pinMode(pinData, INPUT);  
+  pinMode(pinData, INPUT);
   lcd.setCursor(0, 0);
   lcd.print("BitOrderMSBFIRST");
   }
 
 void loop()
   {
-  if (digitalRead(pinStart))
+  if (digitalRead(pinData))
     {
     lcd.setCursor(0, 1);
     lcd.print("st bit :");
 
     
-    delay(10*speedDial);
+    delay(12*speedDial);
     bit0=digitalRead(pinData);
     delay(10*speedDial);
     bit1=digitalRead(pinData);

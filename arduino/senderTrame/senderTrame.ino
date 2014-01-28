@@ -1,5 +1,4 @@
 // /dev/ttyACM0
-const int pinStart = 9;
 const int pinData = 8;
 
 const int speedDial = 1;
@@ -8,8 +7,7 @@ bool trame[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void setup()
   {
-  pinMode(pinStart, OUTPUT);
-  pinMode(pinData, OUTPUT);    
+  pinMode(pinData, OUTPUT);
   }
 
 void loop()
@@ -20,18 +18,18 @@ for (int val_bin=0;val_bin<=bit(15);val_bin++)  // de 0 à bit(15)
     {
     trame[7-num_bit] = HIGH && (val_bin & bit(num_bit)); // bit -> 2pn  
     }
-  digitalWrite(pinStart, HIGH); // bit depart
+  digitalWrite(pinData, HIGH); // bit depart
   delay(8*speedDial);
-  digitalWrite(pinStart, LOW); // bit depart
+  digitalWrite(pinData, LOW); // bit depart
   for (int i=0;i<=7;i++)
     {
     digitalWrite(pinData,trame[i]);
     delay(10*speedDial);
     }
-  digitalWrite(pinData, LOW);
+  digitalWrite(pinData, LOW); // mise à zéro de la pin data
   delay(20*speedDial);
-  delay(200);
+  delay(200); // durée affichage
   }
-  delay(1000);
+  delay(1000); // attente avant remise à zero
 }
     
