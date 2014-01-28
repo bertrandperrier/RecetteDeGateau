@@ -48,3 +48,67 @@ git push
 // pour revenir à la version du dépot
 
 git checkout -- -url fichier-
+
+
+erreur
+======
+les fichiers que j'avais pullé puis modifié, ont été modifié par quelqu'un d'autre,
+
+$ git pull
+
+error: Your local changes to the following files would be overwritten by merge:
+
+	README.md
+	
+Please, commit your changes or stash them before you can merge.
+
+Aborting
+
+
+$ git commit -m "maj"
+
+# Changes not staged for commit:
+
+#	modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+$ git add README.md
+
+
+$ git commit -m "maj"
+
+[master b20a0d8] maj
+
+ 1 file changed, 1 insertion(+)
+ 
+ 
+$ git pull
+
+Auto-merging README.md
+
+Merge made by the 'recursive' strategy.
+
+ README.md
+
+
+$ git status
+
+Your branch is ahead of 'origin/master' by 2 commits.
+
+nothing to commit (working directory clean)
+
+
+$ git push
+
+Writing objects: 100% (6/6), 764 bytes, done.
+
+Total 6 (delta 2)
+
+
+$ git status
+
+# On branch master
+
+nothing to commit (working directory clean)
