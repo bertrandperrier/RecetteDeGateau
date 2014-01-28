@@ -14,11 +14,11 @@ void setup()
 
 void loop()
   {
-for (int j=0;j<=bit(15);j++)  // de 0 à bit(15)
+for (int val_bin=0;val_bin<=bit(15);val_bin++)  // de 0 à bit(15)
   {
-  for (int i=0;i<=15;i++) // de 0 à 15 bit
+  for (int num_bit=0;num_bit<=15;num_bit++) // de 0 à 15 bit
     {
-    trame[i] = HIGH && (j & bit(i)); // bit -> 2pn  
+    trame[7-num_bit] = HIGH && (val_bin & bit(num_bit)); // bit -> 2pn  
     }
   digitalWrite(pinStart, HIGH); // bit depart
   delay(8*speedDial);
