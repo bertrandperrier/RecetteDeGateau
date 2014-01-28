@@ -30,7 +30,9 @@ use
 ---
 cd git folder's
 
-git pull  // modifier les fichiers
+git pull
+
+// modifier les fichiers
 
 git add <fichier ou dossier>
 
