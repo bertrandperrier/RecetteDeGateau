@@ -31,7 +31,7 @@ void loop()
   //trame[8] = true;
   //trame[9] = true;
   
-  for (int bits_donnees=0;bits_donnees<=bit(2);bits_donnees++)  // de 00 à 11(3)
+  for (int bits_donnees=0;bits_donnees<=3;bits_donnees++)  // de 00 à 11(3)
     {
     trame[8] = HIGH && (bits_donnees & bit(0));
     trame[9] = HIGH && (bits_donnees & bit(1));
