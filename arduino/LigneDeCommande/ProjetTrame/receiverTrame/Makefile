@@ -1,5 +1,4 @@
 BOARD_TAG    = uno
-MONITOR_PORT  = /dev/ttyUSB0
 
 ARDUINO_DIR = /usr/share/arduino
 ARDMK_DIR = ../../

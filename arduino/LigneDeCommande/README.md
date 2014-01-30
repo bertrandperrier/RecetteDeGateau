@@ -10,12 +10,9 @@ mkdir MonProjet && cd MonProjet
 
 crée un fichier "Makefile" et copier le contenu ci-dessous
 
-
-#################################
+---------------------------------
 
 BOARD_TAG    = uno
-
-MONITOR_PORT  = /dev/ttyACM0
 
 
 ARDUINO_DIR = /usr/share/arduino
@@ -32,10 +29,10 @@ AVRDUDE_CONF = /etc/avrdude.conf
 
 include ../Arduino.mk
 
-#################################
+---------------------------------
 
 
-ajouter #include <Arduino.h> dans le cpp
+ajouter #include \<Arduino.h\> dans le cpp
 
 make
 
@@ -43,6 +40,6 @@ un dossier "build-uno" est crée
 
 Pour une carte arduino de type uno
 
-avrdude -v -p m328p -P /dev/ttyACM0 -b115200 -c arduino -U flash:w:build-uno/<nom du fichier>.hex
+avrdude -v -p m328p -P /dev/ttyACM0 -b115200 -c arduino -U flash:w:build-uno/\<nom du fichier\>.hex
 
 le programme a été transféré dans la carte arduino
