@@ -1,7 +1,9 @@
 # -*- coding: utf8 -*-
 NbEspace = 0
 NbLigne = 0
-f = open("text", "r")
+name_file="text";
+print "Lecture du fichier : "+name_file
+f = open(name_file, "r")
 for ligne in f:
 	NbLigne +=1
 	while " " in ligne:
