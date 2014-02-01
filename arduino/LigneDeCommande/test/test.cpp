@@ -1,15 +1,20 @@
 // /dev/ttyUSB0
 #include <Arduino.h>
 #include <LiquidCrystal.h>
+// à faire : séparer en 2 programme
 float time_each_tick=2.5; // en ms - 2,5 ms
-void tick2500ms();
 int _output_pin = 4;
 byte valueReceive=0;
+int time_trame_high = 90;
+int time_trame_low = 40;
 LiquidCrystal lcd(13, 12, 11, 10, 9, 8);
 uint16_t _output_frame;
 uint16_t _input_frame;
 int _input_current_bit;
 unsigned long time_last_tick;
+
+void tick2500ms();
+
 void setup()
   {
   lcd.begin(16, 2);
@@ -19,15 +24,12 @@ void setup()
 
 void loop()
   {
-	byte address=0x55;
-	byte data=0x02;
+	byte address=32+8+2;
+	byte data=2;
 
-										//85 hex55 B1010101
-	//									1					1010101 00			10  &  11					
+	//0x55 85 hex55 B1010101
+	//									1					7 bits    			10  &  11					
 	_output_frame = (1 << 9) | (address << 2) | (data & 0x03); // masque 0x03 pour n'avoir que 2 bits
-																					 //1 1010101 10
-																					 
-
 
   lcd.setCursor(0, 0);
   lcd.print("I            ");
@@ -35,7 +37,6 @@ void loop()
 	lcd.print("O            ");
   lcd.setCursor(1, 1);
 	_input_frame = 0x0000;
-	//lcd.print(_output_frame, 2); // 2eme ligne
 	
   for (int _output_currentBit=9;_output_currentBit>=0;_output_currentBit--)
 		{
@@ -48,16 +49,15 @@ void loop()
 		*/
 
 		bool output = (_output_frame & (1 << _output_currentBit));
-		// digitalWrite(_output_pin, HIGH);
+		digitalWrite(_output_pin, output);
 		lcd.print(output); // 2eme ligne
-
 		if (output)
-			{delay(900);
+			{delay(time_trame_high);
 			_input_current_bit=_output_currentBit;
 			_input_frame |= (1 << _input_current_bit);
 			}
 		else
-			{delay(400);}
+			{delay(time_trame_low);}
 		
 		
 		}
