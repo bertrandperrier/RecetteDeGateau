@@ -1,6 +1,7 @@
-test
 RecetteDeGateau
 ===============
+Si le logiciel était un gâteau, il faudrait en fournir la recette.
+
 tuto git
 ========
 clone
