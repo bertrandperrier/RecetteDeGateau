@@ -68,8 +68,9 @@ bool boucle::StartBoucle()
 }
 
 
-boucle boucle1(5, 45, true);
-boucle boucle2(0, 10, true);
+boucle boucle1(0, 30, false);
+boucle boucle2(0, 20, false);
+boucle boucle3(0, 10, false);
 long unsigned int millis0;
 long unsigned int millis1;
 
@@ -87,7 +88,13 @@ void loop()
 	// routine
 	boucle1.Refresh(true);
 	boucle2.Refresh(true);
-	if (millis0+5000<millis()) // lancement de la boucle 1 toute les 5 sec
+	boucle3.Refresh(boucle1.GetValueBoucle() >= 5); // true=>1:10 false=>2:10
+	
+	
+	if (boucle2.GetValueBoucle() >= 5)
+		boucle3.StartBoucle();
+		
+	if (millis0+5000<millis()) // lancement de la boucle 1 toutes les 5 sec
 	{
 		if(boucle1.StartBoucle())
 		{
@@ -95,7 +102,7 @@ void loop()
 		}
 	}
 	
-	if (millis1+2000<millis()) // lancement de la boucle 2 toute les 2 sec
+	if (millis1+2000<millis()) // lancement de la boucle 2 toutes les 2 sec
 	{
 		if(boucle2.StartBoucle())
 		{
@@ -106,13 +113,15 @@ void loop()
 	lcd.setCursor(0, 0); // 1ere ligne
 	lcd.print(boucle1.GetStateBoucle());
 	lcd.print(":");
-	lcd.print(boucle1.GetStateBoucleTxt());
 	lcd.print(boucle1.GetValueBoucle());
 	lcd.print(" ");
+	lcd.print(boucle3.GetStateBoucle());
+	lcd.print(":");
+	lcd.print(boucle3.GetValueBoucle());
+	lcd.print("   ");
 	lcd.setCursor(0, 1); // 2eme ligne
 	lcd.print(boucle2.GetStateBoucle());
 	lcd.print(":");
-	lcd.print(boucle2.GetStateBoucleTxt());
 	lcd.print(boucle2.GetValueBoucle());
 	lcd.print(" ");
 	delay(100);
