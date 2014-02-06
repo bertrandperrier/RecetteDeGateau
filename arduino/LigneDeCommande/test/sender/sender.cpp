@@ -17,13 +17,13 @@ void setup()
 
 void loop()
   {
-	byte address=64+16+8+2+1; //+32+4
+	byte address=32+16+4+1; //64+8+2; 0110101
 	byte data=1; //01
 
 	//0x55 85 hex55 B1010101
 	//									1					7 bits    			10  &  11					
 	_output_frame = (1 << 9) | (address << 2) | (data & 0x03); // masque 0x03 pour n'avoir que 2 bits
-
+	//1 0110101 01
 	
 	for (int _output_currentBit=9;_output_currentBit>=0;_output_currentBit--)
 	{
