@@ -53,8 +53,8 @@ while x < 15:
 	if verbose:
 		print(date_str)
 	date_sortie_datetime = datetime.strptime(date_str, '%d %B %Y')
-	date_sortie_datetime=str(date_sortie_datetime)
-	date_sortie_datetime=date_sortie_datetime[0:10]
+	date_sortie_datetime = str(date_sortie_datetime)
+	date_sortie_datetime = date_sortie_datetime[0:10]
 
 	# si la date est aujourd'hui
 	aujourdhui = datetime.today()
@@ -71,5 +71,5 @@ while x < 15:
 	if verbose:
 		print (" ")
 	# retrait du dernier resultat
-	code_page_html=code_page_html[index+500:-1]
+	code_page_html=code_page_html[index+2000:-1]
 	x=x+1
