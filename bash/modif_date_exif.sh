@@ -1,5 +1,6 @@
 #!/bin/bash
-# ATTENTION ne fonctionne pas avec des nom avec espace
+# Gestion des nom de fichier contenant des espaces
+IFS=$'\n'
 # met à jour la date de modification des jpg du dossier courant à partir de la date de prise de vue d'exif
 # envoie de la liste des fichier dans une variable database
 database=$(find -name "*.jpg")
@@ -35,9 +36,6 @@ for file in `find -name "*.JPG"`; do
 	fi
 done
 
+# Gestion des nom de fichier contenant des espaces
+IFS=$' \t\n'
 
-
-# d'abord on récupère le numéro d'inode du fichier
-# $ stat --format "%i" /chemin/vers/le/fichier
-# puis on récupère la date de création
-# $ debugfs -R 'stat <123456>' /dev/partition | grep crtime
