@@ -1,6 +1,8 @@
 #!/bin/bash
 # Gestion des nom de fichier contenant des espaces
-IFS=$'\n'
+#bizarre IFS=$'\n' ne fonctionne plus
+IFS="
+"
 # met à jour la date de modification des jpg du dossier courant à partir de la date de prise de vue d'exif
 # envoie de la liste des fichier dans une variable database
 database=$(find -name "*.jpg")
