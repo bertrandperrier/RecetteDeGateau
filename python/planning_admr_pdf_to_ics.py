@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+#
+# ce programme convertit un planning de l'ADMR du format pdf au format ics
+#
 # importing required modules
 from PyPDF2 import PdfReader
 import sys
