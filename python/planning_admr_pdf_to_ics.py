@@ -9,8 +9,8 @@ from datetime import datetime
 import webbrowser
 import pytz.reference
 
-file_name_pdf = "planning_admr.pdf" #"planning_admr.pdf"
-file_name_ics = "admr.ics"
+file_name_pdf = "planning_admr.pdf"
+file_name_ics = "planning_admr.ics"
 # variable pour le calcul du décalalge horaire
 heure_hiver = -1
 heure_ete = -2
@@ -106,7 +106,7 @@ f.write("PRODID:-//Google Inc//Google Calendar 70.9054//EN\n")
 f.write("VERSION:2.0\n")
 f.write("CALSCALE:GREGORIAN\n")
 f.write("METHOD:PUBLISH\n")
-f.write("X-WR-CALNAME:karinebertrandcheppa@gmail.com\n")
+f.write("X-WR-CALNAME:<your email>\n")
 f.write("X-WR-TIMEZONE:Europe/Paris\n")
 f.write("BEGIN:VTIMEZONE\n")
 f.write("TZID:Europe/Paris\n")
