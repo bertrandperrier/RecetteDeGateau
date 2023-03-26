@@ -65,8 +65,8 @@ def month_txt_to_int(mois_txt):
 
 def calc_heure_ete_hiver(annee, mois, jour, heure, minute, seconde):
 	heure_input=datetime(annee, mois, jour, heure, minute, seconde)
-	local_tnz = pytz.reference.LocalTimezone()
-	#local_tnz = pytz.timezone("Europe/Paris")
+	#local_tnz = pytz.reference.LocalTimezone()  # tz de l'ordinateur
+	local_tnz = pytz.timezone("Europe/Paris") # tz de Paris
 	decal_heure_ete_hiver_gmt = local_tnz.utcoffset(heure_input)
 	decal_heure_ete_hiver_gmt = -int(decal_heure_ete_hiver_gmt.seconds/3600)
 	return decal_heure_ete_hiver_gmt
