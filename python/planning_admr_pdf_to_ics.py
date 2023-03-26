@@ -114,7 +114,7 @@ f.write("PRODID:-//Google Inc//Google Calendar 70.9054//EN\n")
 f.write("VERSION:2.0\n")
 f.write("CALSCALE:GREGORIAN\n")
 f.write("METHOD:PUBLISH\n")
-f.write("X-WR-CALNAME:<votre email>\n")
+f.write("X-WR-CALNAME:karinebertrandcheppa@gmail.com\n")
 f.write("X-WR-TIMEZONE:Europe/Paris\n")
 f.write("BEGIN:VTIMEZONE\n")
 f.write("TZID:Europe/Paris\n")
@@ -224,6 +224,11 @@ for ligne in result_par_ligne:
 		# nom de l'intervenante dans le résumé
 		f.write("SUMMARY:ADMR "+str_nom_inter+"\n")
 		f.write("TRANSP:OPAQUE\n")
+		f.write("BEGIN:VALARM\n")
+		f.write("ACTION:DISPLAY\n")
+		f.write("DESCRIPTION:This is an event reminder\n")
+		f.write("TRIGGER:-P0DT0H5M0S\n")
+		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
 
 # pied de page au format ics
