@@ -40,8 +40,6 @@ if len(sys.argv) > 1:
 
 # converti le nom du jour en int (lundi=0, ...=6)
 def day_txt_to_int(jour_txt):
-	if debug:
-		print("jour_txt:"+jour_txt)
 	i = 0
 	for jours in jours_de_la_semaine:
 		#if debug:
@@ -58,7 +56,7 @@ def is_day_name(jour_txt):
 		#if debug:
 			#print("jours : "+jour)
 			#print("jour_txt :"+jour_txt)
-		if jour_txt[0:2] == jour[0:2]:
+		if jour_txt[0:5] == jour[0:5]:
 			is_day = True
 	return is_day
 
@@ -104,7 +102,7 @@ while x != -1:
 		result_par_ligne.insert(index, text[0:x]) 
 		text=text[x+1:-1]
 	index = index+1
-
+	
 # ouverture du fichier d'enregistrement
 f = open(file_name_ics, "w")
 
@@ -114,7 +112,7 @@ f.write("PRODID:-//Google Inc//Google Calendar 70.9054//EN\n")
 f.write("VERSION:2.0\n")
 f.write("CALSCALE:GREGORIAN\n")
 f.write("METHOD:PUBLISH\n")
-f.write("X-WR-CALNAME:karinebertrandcheppa@gmail.com\n")
+f.write("X-WR-CALNAME:<email to>@gmail.com\n")
 f.write("X-WR-TIMEZONE:Europe/Paris\n")
 f.write("BEGIN:VTIMEZONE\n")
 f.write("TZID:Europe/Paris\n")
@@ -150,7 +148,7 @@ for ligne in result_par_ligne:
 		#récupération du nom du jour de la semaine 
 		nom_jour = jours_de_la_semaine[day_txt_to_int(ligne)]
 		if debug:
-			print("jour int :"+str(day_txt_to_int(ligne)))
+			print("array jour int :"+str(day_txt_to_int(ligne)))
 			print("jour :"+str(nom_jour))
 		# calcul de la longeur du nom de la semaine pour un futur parsing
 		len_jour = len(nom_jour)
@@ -171,7 +169,12 @@ for ligne in result_par_ligne:
 		if debug:
 			print("decal_heure_ete_hiver_gmt :"+str(decal_heure_ete_hiver_gmt))
 		# extraction de l'heure du début d'intervention en fct de la longueur de chaine et calcul en fct de l'heure d'été/hiver
-		int_debut_heure = int(ligne[len_mois+8:len_mois+10])+decal_heure_ete_hiver_gmt
+		index_debut_heure=ligne.find("h",len_mois)
+		if debug :
+			print("index_debut_heure :"+str(index_debut_heure))
+			print("result h deb :"+str(ligne[index_debut_heure-2:index_debut_heure]))
+		#int_debut_heure = int(ligne[len_mois+8:len_mois+10])+decal_heure_ete_hiver_gmt
+		int_debut_heure = int(ligne[index_debut_heure-2:index_debut_heure])+decal_heure_ete_hiver_gmt
 		str_debut_heure = str(int_debut_heure)
 
 		if len(str_debut_heure) == 1:
@@ -180,21 +183,32 @@ for ligne in result_par_ligne:
 			print("heure debut :"+str_debut_heure)
 
 		# extraction des minutes du début d'intervention en fct de la longueur de chaine
-		str_debut_minute = ligne[len_mois+11:len_mois+13]
+		#str_debut_minute = ligne[len_mois+11:len_mois+13]
+		str_debut_minute = ligne[index_debut_heure+1:index_debut_heure+3]
 		if debug:
 			print("minute debut :"+str_debut_minute)
-			
+		if str_debut_minute.isdigit() == False or int(str_debut_minute)>59:
+			print("ERROR : parsing start minutes, line :"+ligne)
+			f.close()
+			sys.exit()
 		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et calcul en fct de l'heure d'été/hiver
-		int_fin_heure = int(ligne[len_mois+16:len_mois+18])+decal_heure_ete_hiver_gmt
+		index_fin_heure=ligne.find("h",index_debut_heure+1)
+		#int_fin_heure = int(ligne[len_mois+16:len_mois+18])+decal_heure_ete_hiver_gmt
+		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])+decal_heure_ete_hiver_gmt
 		str_fin_heure = str(int_fin_heure)
 		if len(str_fin_heure) == 1:
 			str_fin_heure = "0"+str_fin_heure
 		if debug:
 			print("heure fin :"+str_fin_heure)
 		# extraction des minutes de fin d'intervention en fct de la longueur de chaine
-		str_fin_minute = ligne[len_mois+19:len_mois+21]
+		#str_fin_minute = ligne[len_mois+20:len_mois+22]
+		str_fin_minute = ligne[index_fin_heure+1:index_fin_heure+3]
 		if debug:
 			print("minute fin :"+str_fin_minute)
+		if str_fin_minute.isdigit() == False or int(str_fin_minute)>59:
+			print("ERROR : parsing ending minute, line :"+ligne)
+			f.close()
+			sys.exit()
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
 		str_data_dstart = "2023"+num_mois+num_jour+"T"+str_debut_heure+str_debut_minute+"00Z"
 		if verbose or debug:
@@ -205,7 +219,7 @@ for ligne in result_par_ligne:
 			print(str_data_end)
 		# extraction du nom de l'intervenante en fct de la longueur de chaine
 		str_nom_inter = ligne[len_mois+28:len_mois+70]
-		if debug:
+		if verbose or debug:
 			print("str_nom_inter :"+str_nom_inter)
 
 		# écriture de l'évènement au format ics/google dans le fichier file_name_ics
@@ -237,4 +251,4 @@ f.write("END:VCALENDAR")
 f.close()
 
 # ouvrir l'url https://calendar.google.com/calendar/u/1/r/settings/export?pli=1
-webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
+# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
