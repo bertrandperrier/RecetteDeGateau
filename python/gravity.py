@@ -23,7 +23,7 @@ else:
 	for i in range(nb_ligne):
 		while True:
 			print("ligne n°"+str(i))
-			temp=(raw_input('-->'))
+			temp=(input('-->'))
 			temp_s=temp.split()
 			if len(temp)==nb_colonne:
 				colonne.extend(temp_s)
