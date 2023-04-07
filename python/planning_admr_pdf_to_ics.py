@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 #
 # ce programme convertit un planning de l'ADMR du format pdf au format ics
-#
+# to do : use .split(' ')
 # importing required modules
+
 from PyPDF2 import PdfReader
 import sys
 from datetime import datetime
@@ -12,15 +13,13 @@ import os.path
 
 file_name_pdf = "planning_admr.pdf"
 file_name_ics = "planning_admr.ics"
-# variable pour le calcul du décalalge horaire
-heure_hiver = -1
-heure_ete = -2
-
-decal_heure_ete_hiver_gmt = heure_ete
 
 # liste d'éléments des jours et des mois
 jours_de_la_semaine = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 mois_de_l_annee = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+
+# variable année, à modifier si le planning ne concerne pas l'année en cours
+int_an = int(datetime.today().strftime('%Y'))
 
 # pour afficher les infos de débuggage
 verbose = 0
@@ -60,7 +59,7 @@ def is_day_name(jour_txt):
 			is_day = True
 	return is_day
 
-# converti le nom d'un mois en int (1=Janvier, ...)
+# converti le nom d'un mois en int (Janvier=1, ...)
 def month_txt_to_int(mois_txt):
 	i = 1
 	for mois in mois_de_l_annee:
@@ -102,7 +101,19 @@ while x != -1:
 		result_par_ligne.insert(index, text[0:x]) 
 		text=text[x+1:-1]
 	index = index+1
-	
+
+result_par_ligne = ['Vendredi 24 Juillet de 8h15 à 10h45 00h30 JACQUELIN GROSSE Stéphanie']
+
+def find_name_inter(ligne_txt):
+	r=0
+	i = len(ligne_txt)-1
+	while i != 0:
+		if (ligne_txt[i].isdigit()):
+			r = i
+			return str(ligne_txt[r+2:r+30])
+		i -= 1
+	return False
+
 # ouverture du fichier d'enregistrement
 f = open(file_name_ics, "w")
 
@@ -112,7 +123,7 @@ f.write("PRODID:-//Google Inc//Google Calendar 70.9054//EN\n")
 f.write("VERSION:2.0\n")
 f.write("CALSCALE:GREGORIAN\n")
 f.write("METHOD:PUBLISH\n")
-f.write("X-WR-CALNAME:<email to>@gmail.com\n")
+f.write("X-WR-CALNAME:<your email>\n")
 f.write("X-WR-TIMEZONE:Europe/Paris\n")
 f.write("BEGIN:VTIMEZONE\n")
 f.write("TZID:Europe/Paris\n")
@@ -127,10 +138,8 @@ f.write("DTSTART:19700329T020000\n")
 f.write("RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU\n")
 f.write("END:DAYLIGHT\n")
 f.write("BEGIN:STANDARD\n")
-
 f.write("TZOFFSETFROM:+0200\n")
 f.write("TZOFFSETTO:+0100\n")
-
 f.write("TZNAME:CET\n")
 f.write("DTSTART:19701025T030000\n")
 f.write("RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\n")
@@ -140,6 +149,7 @@ f.write("END:VTIMEZONE\n")
 # extraction des données pour chaque élément du array
 for ligne in result_par_ligne:
 	if debug:
+		print("############### nouvelle boucle ###############")
 		print("is_day_name :"+str(is_day_name(ligne)))
 	# si la ligne commence par le nom d'un jour de semaine
 	if is_day_name(ligne):
@@ -148,77 +158,121 @@ for ligne in result_par_ligne:
 		#récupération du nom du jour de la semaine 
 		nom_jour = jours_de_la_semaine[day_txt_to_int(ligne)]
 		if debug:
-			print("array jour int :"+str(day_txt_to_int(ligne)))
-			print("jour :"+str(nom_jour))
+			print("index jour :"+str(day_txt_to_int(ligne)))
+			print("nom_jour :"+str(nom_jour))
 		# calcul de la longeur du nom de la semaine pour un futur parsing
 		len_jour = len(nom_jour)
 		# extraction du numéro du jour
 		num_jour = ligne[len_jour+1:len_jour+3]
 		if debug:
-			print("num jour :"+num_jour)
-		# extractoin du nom du mois
+			print("num_jour :"+num_jour)
+		# extraction des 4 1ère lettres du nom du mois
 		nom_mois = ligne[len_jour+4:len_jour+8]
+		if debug:
+			print("nom_mois 4char :"+str(nom_mois))
 		# conversion du nom du mois en int
 		num_mois = month_txt_to_int(nom_mois)
+		if num_mois == False:
+			print("ERROR : parsing month "+nom_mois+" is not name of month")
+			f.close()
+			sys.exit()
 		if debug:
 			print("num_mois :"+str(num_mois))
-		# longeur du nom du mois et du jour
-		len_mois = len(nom_mois)+len_jour
+			
+		# calcul de la longeur du nom du mois et du jour		
+		nom_mois = mois_de_l_annee[int(num_mois)-1]
+		len_mois = len(nom_mois)
+		len_jour_et_mois = len_mois+len_jour
 		
-		decal_heure_ete_hiver_gmt = calc_heure_ete_hiver(2023, int(num_mois), int(num_jour), 12, 0, 0)
+		if debug:
+			print("len_jour :"+str(len_jour))
+			print("nom_mois entier :"+str(nom_mois))
+			print("len_mois :"+str(len_mois))
+			print("len_jour_et_mois :"+str(len_jour_et_mois))	
+		if not num_jour.isdigit():
+			print("ERROR : parsing day "+num_jour+" is not digit")
+			f.close()
+			sys.exit()
+		
+		decal_heure_ete_hiver_gmt = calc_heure_ete_hiver(int_an, int(num_mois), int(num_jour), 12, 0, 0)
 		if debug:
 			print("decal_heure_ete_hiver_gmt :"+str(decal_heure_ete_hiver_gmt))
+		
 		# extraction de l'heure du début d'intervention en fct de la longueur de chaine et calcul en fct de l'heure d'été/hiver
-		index_debut_heure=ligne.find("h",len_mois)
+		index_debut_heure=ligne.find("h",len_jour_et_mois)
+		str_debut_heure = ligne[index_debut_heure-2:index_debut_heure]
+		
+		# mise au format de l'heure (2char)
+		if str_debut_heure[0] == " ":
+			str_debut_heure = str_debut_heure[1]
 		if debug :
 			print("index_debut_heure :"+str(index_debut_heure))
-			print("result h deb :"+str(ligne[index_debut_heure-2:index_debut_heure]))
-		#int_debut_heure = int(ligne[len_mois+8:len_mois+10])+decal_heure_ete_hiver_gmt
-		int_debut_heure = int(ligne[index_debut_heure-2:index_debut_heure])+decal_heure_ete_hiver_gmt
+			print("str_debut_heure :"+str(str_debut_heure))
+		
+		# détection d'erreur
+		if str_debut_heure.isdigit() == False or int(str_debut_heure)>24:
+			print("ERROR : parsing start hour. "+str_debut_heure+" is not int or >24, line :"+ligne)
+			f.close()
+			sys.exit()		
+		# mise à l'heure GMT
+		int_debut_heure = int(str_debut_heure)+decal_heure_ete_hiver_gmt
 		str_debut_heure = str(int_debut_heure)
-
+		#mise au format de l'heure (2char)
 		if len(str_debut_heure) == 1:
 			str_debut_heure = "0"+str_debut_heure
 		if debug:
 			print("heure debut :"+str_debut_heure)
 
 		# extraction des minutes du début d'intervention en fct de la longueur de chaine
-		#str_debut_minute = ligne[len_mois+11:len_mois+13]
 		str_debut_minute = ligne[index_debut_heure+1:index_debut_heure+3]
 		if debug:
 			print("minute debut :"+str_debut_minute)
+		# détection d'erreur
 		if str_debut_minute.isdigit() == False or int(str_debut_minute)>59:
 			print("ERROR : parsing start minutes, line :"+ligne)
 			f.close()
 			sys.exit()
-		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et calcul en fct de l'heure d'été/hiver
+		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et mise à l'heure GMT
 		index_fin_heure=ligne.find("h",index_debut_heure+1)
-		#int_fin_heure = int(ligne[len_mois+16:len_mois+18])+decal_heure_ete_hiver_gmt
 		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])+decal_heure_ete_hiver_gmt
 		str_fin_heure = str(int_fin_heure)
+		
+		#mise au format de l'heure (2char)
 		if len(str_fin_heure) == 1:
 			str_fin_heure = "0"+str_fin_heure
 		if debug:
 			print("heure fin :"+str_fin_heure)
+			
 		# extraction des minutes de fin d'intervention en fct de la longueur de chaine
-		#str_fin_minute = ligne[len_mois+20:len_mois+22]
 		str_fin_minute = ligne[index_fin_heure+1:index_fin_heure+3]
 		if debug:
 			print("minute fin :"+str_fin_minute)
+		
+		# détection d'erreur
 		if str_fin_minute.isdigit() == False or int(str_fin_minute)>59:
 			print("ERROR : parsing ending minute, line :"+ligne)
 			f.close()
 			sys.exit()
+		
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
 		str_data_dstart = "2023"+num_mois+num_jour+"T"+str_debut_heure+str_debut_minute+"00Z"
 		if verbose or debug:
 			print(str_data_dstart)
+		
 		# concatenation des variables, mise au format ics/google de la date/heure de fin de l'évènement
 		str_data_end = "2023"+num_mois+num_jour+"T"+str_fin_heure+str_fin_minute+"00Z"
 		if verbose or debug:
 			print(str_data_end)
+		
 		# extraction du nom de l'intervenante en fct de la longueur de chaine
-		str_nom_inter = ligne[len_mois+28:len_mois+70]
+		str_nom_inter = find_name_inter(ligne)
+		
+		# détection d'erreur
+		if (str_nom_inter == False):
+			print("ERROR : parsing home worker, line :"+ligne)
+			f.close()
+			sys.exit()
+		
 		if verbose or debug:
 			print("str_nom_inter :"+str_nom_inter)
 
@@ -241,6 +295,7 @@ for ligne in result_par_ligne:
 		f.write("BEGIN:VALARM\n")
 		f.write("ACTION:DISPLAY\n")
 		f.write("DESCRIPTION:This is an event reminder\n")
+		# rappel de l'évènement 5 min avant
 		f.write("TRIGGER:-P0DT0H5M0S\n")
 		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
