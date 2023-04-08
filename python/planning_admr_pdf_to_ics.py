@@ -2,8 +2,8 @@
 #
 # ce programme convertit un planning de l'ADMR du format pdf au format ics
 # to do : use .split(' ')
-# importing required modules
 
+# importing required modules
 from PyPDF2 import PdfReader
 import sys
 from datetime import datetime
@@ -102,7 +102,7 @@ while x != -1:
 		text=text[x+1:-1]
 	index = index+1
 
-result_par_ligne = ['Vendredi 24 Juillet de 8h15 à 10h45 00h30 JACQUELIN GROSSE Stéphanie']
+result_par_ligne = ['Vendredi 24 Juillet de 8h15 à 25h45 00h30 JACQUELIN GROSSE Stéphanie']
 
 def find_name_inter(ligne_txt):
 	r=0
@@ -242,7 +242,13 @@ for ligne in result_par_ligne:
 			str_fin_heure = "0"+str_fin_heure
 		if debug:
 			print("heure fin :"+str_fin_heure)
-			
+		
+		# détection d'erreur
+		if str_fin_heure.isdigit() == False or int(str_fin_heure)>24:
+			print("ERROR : parsing ending hour. "+str_fin_heure+" is not int or >24, line :"+ligne)
+			f.close()
+			sys.exit()
+		
 		# extraction des minutes de fin d'intervention en fct de la longueur de chaine
 		str_fin_minute = ligne[index_fin_heure+1:index_fin_heure+3]
 		if debug:
