@@ -102,8 +102,6 @@ while x != -1:
 		text=text[x+1:-1]
 	index = index+1
 
-result_par_ligne = ['Vendredi 24 Juillet de 8h15 à 25h45 00h30 JACQUELIN GROSSE Stéphanie']
-
 def find_name_inter(ligne_txt):
 	r=0
 	i = len(ligne_txt)-1
