@@ -174,8 +174,5 @@ while (x < 15 and index != -1):
 			lib_send_mail_laposte.EnvoyerEmail("sortie_dvd", html)
 	if verbose >= 1:
 		print ("fin de boucle")
-	# retrait du dernier resultat
 
-	# print(code_page_html)
-	#code_page_html=code_page_html[index:-1]
 	x=x+1
