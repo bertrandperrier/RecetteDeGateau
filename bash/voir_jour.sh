@@ -1,2 +1,2 @@
 #!/bin/bash
-cat /home/bertrand/linux/script/output_updatedns
+cat /home/$USER/linux/script/output_updatedns

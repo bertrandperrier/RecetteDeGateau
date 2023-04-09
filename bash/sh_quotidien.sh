@@ -8,5 +8,4 @@ then
 	sudo apt -qq update && sudo apt -qq upgrade && sudo apt -qq dist-upgrade && sudo apt -qq autoremove && apt -qq list --upgradable
 	sh /home/$USER/linux/script/grep_updatedns.sh
 	sh /home/$USER/linux/script/voir_jour.sh
- 	#gedit /home/$USER/Documents/a\ faire.txt
 fi

@@ -15,7 +15,6 @@ then
 	else
 		echo "annulé"
 	fi
-	##echo $nb_mesg" messages / 38"
 else
 	echo "pas de message"
 fi
