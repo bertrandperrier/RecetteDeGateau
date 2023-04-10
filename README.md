@@ -113,3 +113,15 @@ $ git status
 On branch master
 
 nothing to commit (working directory clean)
+
+
+# résumé
+git add <fichier>
+git commit -a -m "commentaire"
+git push
+
+
+ou alors
+git commit -a
+dans vim saisir le commentaire
+git push
