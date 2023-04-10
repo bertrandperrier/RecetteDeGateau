@@ -125,3 +125,6 @@ ou alors
 git commit -a
 dans vim saisir le commentaire
 git push
+
+#enregistrer son login/pwd dans git
+https://www.delftstack.com/fr/howto/git/git-save-credentials/
