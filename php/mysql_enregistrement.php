@@ -1,9 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- index.php -->
+<!-- mysql_enregistrement.php -->
 <?php
-
-$nom_php = __FILE__;
 include("header.php");
+$db="mes_jeux_videos";
 include("db.php");
 ?>
 
@@ -15,7 +14,7 @@ include("db.php");
 	<link rel="shortcut icon" href="favicon.ico" type="images/x-icon">
 	<title>Bertrand&gt;Page d'enregistrement</title>
 	<?php
-	if (isMobile() || $m==1)
+	if ($m==1)
 		{
 		echo('<link rel="stylesheet" href="style-mobi.css">
 			  <link rel="stylesheet" href="blocnotes-mobi.css">');
@@ -32,56 +31,25 @@ include("db.php");
 	<meta name="Publisher" content="Bertrand Perrier">
 	<meta name="Copyright" content="Copyright © 2009 Bertrand Perrier. Tous droits réservés.">
 	<meta name="Content-language" content="fr">
-	<meta name="verify-v1" content="tPA7nyIPnaxLqa7J7+PIDRQjO1fffWD+Kbr3m03DA2Q=">
-	
-	<link rel="alternate" type="application/atom+xml" title="Atom 1.0" href="flux.xml">
-
 </head>
 <body>
 
 <?php
 if ($m==1)
-	{
-	echo("<h1>Mes jeux vid&eacute;os<br>version mobile</h1>");
-	}
+	{ echo("<h1>Mes jeux vid&eacute;os<br>version mobile</h1>"); }
 	else
-	{
-	echo("<h1>Mes jeux vid&eacute;os</h1>");
-	}
+	{ echo("<h1>Mes jeux vid&eacute;os</h1>"); }
 
 
-if (isset($_POST["q"]))
-	{
-	$q = $_POST["q"];
-	}
-if (isset($_POST["c"]))
-	{
-	$c = $_POST["c"];
-	}
-		
-		
-if (isset($_POST["name"]))
-	{
-	$name = $_POST["name"];
-	}
-if (isset($_POST["new_id"]))
-	{
-	$new_id = $_POST["new_id"];
-	}
-if (isset($_POST["console"]))
-	{
-	$console = $_POST["console"];
-	}
-if (isset($_POST["developpeur"]))
-	{
-	$developpeur = $_POST["developpeur"];
-	}
-	
-if (isset($_POST["mdp"]))
-	{
-	$mdp = $_POST["mdp"];
-	}
-	
+if (isset($_POST["q"])) 	{             $q = $_POST["q"]; }
+if (isset($_POST["c"])) 	{             $c = $_POST["c"]; }
+if (isset($_POST["name"])) 	{          $name = $_POST["name"]; }
+if (isset($_POST["new_id"])) 	{        $new_id = $_POST["new_id"]; }
+if (isset($_POST["console"])) 	{       $console = $_POST["console"]; }
+if (isset($_POST["developpeur"])) { $developpeur = $_POST["developpeur"]; }
+if (isset($_POST["mdp"])) 	{           $mdp = $_POST["mdp"]; }
+
+// premier affichage de la page (pas de validation)
 if (!isset($_POST["name"]))
 	{
 	//sql nb enregistrement
@@ -111,9 +79,10 @@ if (!isset($_POST["name"]))
 	
 	//NEW ID HIDDEN
 	$new_id = $nb_enregistrement_list_jv+1;
-	print '<tr><td>Nom</td><td>Console</td><td>D&eacute;veloppeur</td><td>Mot de passe</td></tr>';
+	if ($m != 1) echo '<tr><td>Nom</td><td>Console</td><td>D&eacute;veloppeur</td><td>Mot de passe</td></tr>';
 	print '<input id="prodId" name="new_id" type="hidden" value="'.($new_id).'">';
 	echo '<tr><td><input type="text" name="name"></td>';
+	if ($m==1) echo'</tr><tr>';
 	print "<td><select name=\"console\">";
 	//CONSOLE
     	foreach ($connexion->query($sql_console) as $ligne_de_tableau)
@@ -121,6 +90,7 @@ if (!isset($_POST["name"]))
        		print '<option value="'.$ligne_de_tableau[1].'">'.$ligne_de_tableau[0].'</option>';
        	    	}
 	echo '</select></td>';
+	if ($m==1) echo'</tr><tr>';
 	//DEVELOPPEUR
 	print "<td><select name=\"developpeur\">";
     	foreach ($connexion->query($sql_developpeur) as $ligne_de_tableau)
@@ -128,6 +98,7 @@ if (!isset($_POST["name"]))
        		print '<option value="'.$ligne_de_tableau[1].'">'.$ligne_de_tableau[0].'</option>';
        	    		}
 	echo '</select></td>';
+	if ($m==1) echo'</tr><tr>';
 	//BOUTON ENREGISTRER
 	echo '<td><input type="password" name="mdp"><button type="submit">Enregistrer</button></td>';
 	echo '</form></tr></table>';
@@ -135,11 +106,12 @@ if (!isset($_POST["name"]))
 	$connexion = null; //On ferme la connexion à MySQL
 	}
 
-
+//deuxième affichage de la page (clic sur le bouton Enregistrer)
 if (isset($_POST["new_id"]))
 	{
-	if ($mdp=="MON_MOT_DE_PASSE")
+	if ($mdp=="KvnzRyuquf6cXRJ%")
 		{
+		//requete
 		$sql_new_game="insert into list_jv values ('".$new_id."', '".$name."','".$console."','".$developpeur."');<br>";
 		$result_new_game = $connexion->prepare($sql_new_game);
 		$result_new_game->execute();
@@ -152,11 +124,11 @@ if (isset($_POST["new_id"]))
 		echo '<p class="corps">Mot de passe incorrect</p>';
 		}
 	}
-	
-	
-		
+
+
+
 echo '<h3><a href="'.$_SERVER["PHP_SELF"].'">Recommencer</a><br>';
-echo '<a href="mesjeuxvideos.php?q=1">Retour &agrave; la liste des jeux</a></h3>';
+echo '<a href="page_mesjeuxvideos.php?q=1">Retour &agrave; la liste des jeux</a></h3>';
 
 
 include("aff_icone.php");
