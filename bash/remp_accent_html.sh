@@ -4,6 +4,12 @@
 
 # Ce script permet de remplacé les caractère accentué par le codage html
 # par exemple é devient eacute;
+
+# Ce scripts est à mettre pour :
+#    - Caja (Mate) dans ~/.config/caja/scripts
+#    - Nautilus (Gnome/Unity) dans ~/.local/share/nautilus/scripts
+#    - Némo (Cinnamon) dans ~/.local/share/nemo/scripts/
+
 zenity --info --text=$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 zenity --info --text="Veuillez attendre l'avertissement de fin du traitement du fichier\n valider pour commencer le traitement" --title="remp_accent_html.sh"
 cp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS /tmp/test_accent.php
@@ -27,6 +33,6 @@ sed -e "s/â/\&acirc;/g" $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
 mv -f /tmp/fichier.tmp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 sed -e "s/Â/\&Acirc;/g" $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
 mv -f /tmp/fichier.tmp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
-##gedit $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
+
 zenity --info --text="Le fichier à été modifié et enregistré avec succés" --title="remp_accent_html.sh"
 
