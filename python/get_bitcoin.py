@@ -1,16 +1,10 @@
 #!/usr/bin/python
 #doc https://api.gandi.net/docs/livedns/
 import sys
-import urllib
+import urllib.request as url
 import smtplib
-
-def envoyerMail(sujet, message):
-	serveur = smtplib.SMTP('smtp.gmail.com', 587) ## Connexion au serveur sortant (en precisant son nom et son port)
-	serveur.starttls() ## Specification de la securisation
-	serveur.login("bertrandperrier", "aqshqdvsdjtmrasx")    ## Authentification
-	message = "To: bertrandperrier@laposte.net\nsubject:"+str(sujet)+"\n"+str(message)    ## Message a envoyer
-	serveur.sendmail("bertrandperrier@gmail.com", "bertrandperrier@laposte.net", message)    ## Envoie du message
-	serveur.quit()    ## Deconnexion du serveur
+import os
+import lib_send_mail_laposte
 
 verbose = 0
 if len(sys.argv) > 1:
@@ -31,15 +25,15 @@ fichier.close()
 	#print BT
 
 
-code_html = urllib.urlopen('https://www.coinhouse.com/fr/cours-bitcoin/').read()
+code_html = url.urlopen('https://www.coinhouse.com/fr/cours-bitcoin/').read()
 
-index = code_html.find('data-currency="EUR"')
+index = code_html.find(b'data-currency="EUR"')
 if verbose:
 	print('CoinHouse')
 	#print(code_html[index+26:index+32])
 CH=int(code_html[index+26:index+28]+code_html[index+29:index+32])
 if verbose:
-	print CH
+	print(CH)
 
 #code_html = urllib.urlopen('https://www.google.com/finance/quote/BTC-EUR').read()
 
@@ -53,7 +47,6 @@ if verbose:
 	print('achete   a 35549 32872')
 	print('rentable a 36588')
 	print('vendre   a 50000')
-	print('racheter a 30000')
 
 #ni gain ni perte
 #if CH > 38262:
@@ -62,28 +55,29 @@ if CH > 50000:
 	if verbose:
 		print("50000 soit 273,3 euros")
 	else:
-		envoyerMail("Bitcoin haut", "vendre\nValeur BC : "+str(CH)+"\ngain minimum 73,30")
+		lib_send_mail_laposte.EnvoyerEmail("Bitcoin haut", "vendre\nValeur BC : "+str(CH)+"\ngain minimum 73,30")
 		
 
 if verbose:
-	print('CH:'+str(CH))
-	print('VB:'+str(valeur_basse))
+	print('CoinHouse:'+str(CH))
+	print('Valeur basse:'+str(valeur_basse))
 	
 
 	
 if int(CH) < int(valeur_basse):
 	with open('/home/bertrand/linux/script/get_bitcoin.txt', "w") as fichier:  #efface le contenu du fichier
+		# fichier.write(str(CH))
+		fichier = open('/home/bertrand/linux/script/get_bitcoin.txt', "a")
 		fichier.write(str(CH))
-	fichier = open('get_bitcoin.txt', "a")
-	fichier.write(str(CH))
-	fichier.close()
+		fichier.close()
 	if verbose:
 		print("acheter des BTC : cour bas")
 	else:
-		envoyerMail("Bitcoin bas", "valeur basse \nValeur BC : "+str(CH)+"\nAcheter des bitcoins")
+		lib_send_mail_laposte.EnvoyerEmail("Bitcoin bas", "valeur basse \nValeur BC : "+str(CH)+"\nAcheter des bitcoins")
 
 if CH > 36588:
 	if verbose:
 		print("investissement rentable patienter")
-
-		#envoyerMail("Bitcoin rentable", "investissement rentable patienter \nValeur BC : "+str(CH)+"\nvendre a 50 000")
+	else:
+		lib_send_mail_laposte.EnvoyerEmail("Bitcoin rentable", "investissement rentable patienter \nValeur BC : "+str(CH)+"\nvendre a 50 000")
+		
