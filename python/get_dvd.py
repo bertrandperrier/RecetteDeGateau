@@ -21,17 +21,16 @@ def supprime_accent(ligne):
             i += 1
         return ligne
 
-verbose = 0
 
-
-
-
-if len(sys.argv[1]) >= 2:
-	if sys.argv[1] == "-v":
-		verbose = 1
-	if len(sys.argv[1]) >= 3:
-		if sys.argv[1] == "-va" or sys.argv[1] == "-av":
-			verbose = 2
+if len(sys.argv) == 2:
+	if len(sys.argv[1]) >= 2:
+		if sys.argv[1] == "-v":
+			verbose = 1
+		if len(sys.argv[1]) >= 3:
+			if sys.argv[1] == "-va" or sys.argv[1] == "-av":
+				verbose = 2
+else:
+	verbose = 0
 
 			
 # recuperation code html du site
