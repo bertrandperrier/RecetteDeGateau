@@ -1,14 +1,22 @@
 #!/bin/bash
 # 18/02/2024
 # ce script modifie la date "de mofication" par la "date de la prise" Exif "Image timestamp"
-if [ "$1" = "" ] ; then
+if [ "$1" = "" ]
+then
 	echo -n "saisir le nom du fichier
 "
 	exit 0
 fi
 
-if ! [ -f "$1" ];then
-	echo "Le fichier n'existe pas !";
+if ! [ -f "$1" ]
+then
+	echo "Le fichier n'existe pas !"
+	exit 0
+fi
+
+if ! [ $(mimetype -b "$1") == "image/jpeg" ]
+then
+	echo "Le fichier n'est pas au format jpg"
 	exit 0
 fi
 
