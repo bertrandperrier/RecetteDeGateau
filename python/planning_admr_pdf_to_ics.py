@@ -25,10 +25,10 @@ file_name_ics = "planning_admr.ics"
 
 # liste d'éléments des jours et des mois
 days_of_the_week = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
 # variable année, à modifier si le planning ne concerne pas l'année en cours
-int_an = int(datetime.today().strftime('%Y'))
+int_year = int(datetime.today().strftime('%Y'))
 
 # pour afficher les infos de débuggage
 verbose = 0
@@ -47,27 +47,27 @@ if len(sys.argv) > 1:
 		sys.exit()
 
 # converti le nom du jour en int (lundi=0, ...=6)
-def day_txt_to_int(jour_txt):
+def day_txt_to_int(arg_day_txt):
 	i = 0
 	for jours in days_of_the_week:
-		if jours[0:2] == jour_txt[0:2]:
+		if jours[0:2] == arg_day_txt[0:2]:
 			return i
 		i=i+1
 	return False
 
 # vérifie si l'argument est le nom d'un jour de la semaine
-def is_day_name(jour_txt):
+def is_day_name(arg_day_txt):
 	is_day = False
 	for jour in days_of_the_week:
-		if jour_txt[0:5] == jour[0:5]:
+		if arg_day_txt[0:5] == jour[0:5]:
 			is_day = True
 	return is_day
 
 # converti le nom d'un mois en int (Janvier=1, ...)
 def month_txt_to_int(mois_txt):
 	i = 1
-	for mois in months_of_the_year:
-		if mois[0:4] == mois_txt[0:4]:
+	for month in months_of_the_year:
+		if month[0:4] == mois_txt[0:4]:
 			if len(str(i)) == 2:
 				return i
 			else:
@@ -202,6 +202,7 @@ for ligne in result_par_ligne:
 			print("nom_mois entier :"+str(nom_mois))
 			print("len_mois :"+str(len_mois))
 			print("len_jour_et_mois :"+str(len_jour_et_mois))
+		
 		# détection d'erreur	
 		if not num_jour.isdigit():
 			print("ERREUR : parsing numéro du jour "+num_jour+" n'est pas un numéro")
@@ -209,7 +210,7 @@ for ligne in result_par_ligne:
 			sys.exit()
 		
 		# calcul décalage entre l'heure du pdf et gmt (-1 en hiver, -2 en été)
-		decal_heure_ete_hiver_gmt = calc_heure_ete_hiver(int_an, int(num_mois), int(num_jour), 12, 0, 0)
+		decal_heure_ete_hiver_gmt = calc_heure_ete_hiver(int_year, int(num_mois), int(num_jour), 12, 0, 0)
 		if debug:
 			print("decal_heure_ete_hiver_gmt :"+str(decal_heure_ete_hiver_gmt))
 		
@@ -275,17 +276,23 @@ for ligne in result_par_ligne:
 		
 		# détection d'erreur
 		if str_fin_minute.isdigit() == False or int(str_fin_minute)>59:
-			print("ERREUR : parsing minute de fin, ligne :"+ligne)
+			print("ERROR : parsing ending minute, line :"+ligne)
 			f.close()
 			sys.exit()
 		
+		# détection heure de fin < à heure de début
+		if (int_debut_heure*60+int(str_debut_minute) > int_fin_heure*60+int(str_fin_minute)):
+			print("ERROR : hour ending befor hour begin , line :"+ligne)
+			f.close()
+			sys.exit()
+			
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
-		str_data_dstart = "2023"+num_mois+num_jour+"T"+str_debut_heure+str_debut_minute+"00Z"
+		str_data_dstart = year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00Z"
 		if verbose or debug:
 			print(str_data_dstart)
 		
 		# concatenation des variables, mise au format ics/google de la date/heure de fin de l'évènement
-		str_data_end = "2023"+num_mois+num_jour+"T"+str_fin_heure+str_fin_minute+"00Z"
+		str_data_end = year+str(num_mois)+str(num_jour)+"T"+str_fin_heure+str_fin_minute+"00Z"
 		if verbose or debug:
 			print(str_data_end)
 		
@@ -329,6 +336,6 @@ for ligne in result_par_ligne:
 f.write("END:VCALENDAR")
 # fermeture du fichier enregistré
 f.close()
-
-# ouvrir l'url https://calendar.google.com/calendar/u/1/r/settings/export?pli=1
+print("Fichier "+file_name_ics+" enregistré")
+print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
 # webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
