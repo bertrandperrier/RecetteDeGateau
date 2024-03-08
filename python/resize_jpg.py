@@ -45,11 +45,11 @@ else:
 files = os.listdir(path)
 for name in files:
 	if (name != "vignettes" and name[-3:] == "jpg"):
-		print("redimensionnement "+name+" en cours")
+		print("redimensionnement "+name+" en cours vers vignettes/")
 		src = cv2.imread(path+name, cv2.IMREAD_UNCHANGED)
 		#percent by which the image is resized
-		scale_percent = 75
-		#calculate the 75 percent of original dimensions
+		scale_percent = 25
+		#calculate the 25 percent of original dimensions
 		width = int(src.shape[1] * scale_percent / 100)
 		height = int(src.shape[0] * scale_percent / 100)
 		# dsize

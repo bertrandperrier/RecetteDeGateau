@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#doc https://api.gandi.net/docs/livedns/
+
 import sys
 import urllib.request as url
 import smtplib
