@@ -21,7 +21,7 @@ def supprime_accent(ligne):
             i += 1
         return ligne
 
-
+verbose = 0
 if len(sys.argv) == 2:
 	if len(sys.argv[1]) >= 2:
 		if sys.argv[1] == "-v":
@@ -47,6 +47,8 @@ code_page_html = urllib.request.urlopen(request_site).read()
 code_page_html = code_page_html.decode()
 index=0
 x = 0
+erreur_extract_date = False
+
 # faire 15 fois
 while (x < 15 and index != -1):
 	if verbose >= 2:
@@ -130,46 +132,52 @@ while (x < 15 and index != -1):
 
 	if verbose >= 2:
 		print("L131 " + date_str)	
-	
-	date_sortie_datetime = datetime.strptime(date_str, '%d %B %Y')
-	date_sortie_datetime = str(date_sortie_datetime)
-	date_sortie_datetime = date_sortie_datetime[0:10]
-
-	# si la date est aujourd'hui
-	aujourdhui = datetime.today()
-	aujourdhui = str(aujourdhui)
-	aujourdhui = aujourdhui[0:10]
-	#aujourdhui = "2022-11-17"
-	
-
-		
-	if(date_sortie_datetime == aujourdhui):
+	try:
+		date_sortie_datetime = datetime.strptime(date_str, '%d %B %Y')
+	except ValueError as inst:
 		if verbose >= 1:
-			print("date : " + date_sortie_datetime)
+			print("Erreur extraction date "+str(inst.args))
+		erreur_extract_date = True
 		
-		message = "Le film <b>"+titre_str+"</b> sort aujourdhui"
+	if (not erreur_extract_date):
+		date_sortie_datetime = str(date_sortie_datetime)
+		date_sortie_datetime = date_sortie_datetime[0:10]
 
-		#message = message.encode('utf-8')
-		message = supprime_accent(message)
+		# si la date est aujourd'hui
+		aujourdhui = datetime.today()
+		aujourdhui = str(aujourdhui)
+		aujourdhui = aujourdhui[0:10]
+		#aujourdhui = "2022-11-17"
 		
-		
-		html = """\
-		<html>
-		  <head></head>
-		  <body>
-		    <p>Le film <b><a href="https://www.allocine.fr/rechercher/?q="""+titre_str+"""\">"""+titre_str+"""</a></b> sort aujourdhui</p>
-		  </body>
-		</html>
-		"""
-	
-	
-		if verbose >= 1:
-			# on affiche l'annonce du film qui sort aujourdhui
-			print(message)
-		else:
-			# on envoie par email l'annonce du film qui sort aujourdhui
-			lib_send_mail_laposte.EnvoyerEmail("sortie_dvd", html)
-	if verbose >= 2:
-		print ("fin de boucle")
 
-	x=x+1
+			
+		if(date_sortie_datetime == aujourdhui):
+			if verbose >= 1:
+				print("date : " + date_sortie_datetime)
+			
+			message = "Le film <b>"+titre_str+"</b> sort aujourdhui"
+
+			#message = message.encode('utf-8')
+			message = supprime_accent(message)
+			
+			
+			html = """\
+			<html>
+			  <head></head>
+			  <body>
+			    <p>Le film <b><a href="https://www.allocine.fr/rechercher/?q="""+titre_str+"""\">"""+titre_str+"""</a></b> sort aujourdhui</p>
+			  </body>
+			</html>
+			"""
+		
+		
+			if verbose >= 1:
+				# on affiche l'annonce du film qui sort aujourdhui
+				print(message)
+			else:
+				# on envoie par email l'annonce du film qui sort aujourdhui
+				lib_send_mail_laposte.EnvoyerEmail("sortie_dvd", html)
+		if verbose >= 2:
+			print ("fin de boucle")
+
+		x=x+1
