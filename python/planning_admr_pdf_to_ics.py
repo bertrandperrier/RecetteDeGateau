@@ -12,7 +12,7 @@ import pytz.reference
 import os.path
 
 # email de l'agenda
-email_for_ics = 'xxxxxxx@xxxxxx.xxx'
+email_for_ics = 'karinebertrandcheppa@gmail.com'
 
 # notification nombre d'heure avant evenement
 reminder_delay_hour = "0"
@@ -22,9 +22,9 @@ reminder_delay_minute = "5"
 
 file_name_pdf = "planning_admr.pdf"
 file_name_ics = "planning_admr.ics"
-
+year = "2024"
 # liste d'éléments des jours et des mois
-days_of_the_week = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+days_of_the_week = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
 # variable année, à modifier si le planning ne concerne pas l'année en cours
@@ -50,13 +50,17 @@ if len(sys.argv) > 1:
 def day_txt_to_int(arg_day_txt):
 	i = 0
 	for jours in days_of_the_week:
-		if jours[0:2] == arg_day_txt[0:2]:
+		if debug:
+			print("jours[0:2] :"+str(jours[0:2]))
+			print("arg_day_txt[0:2] :"+str(arg_day_txt[0:2]))
+		if jours[0:2].lower() == arg_day_txt[0:2].lower():
 			return i
 		i=i+1
 	return False
 
 # vérifie si l'argument est le nom d'un jour de la semaine
 def is_day_name(arg_day_txt):
+	arg_day_txt=arg_day_txt.lower()
 	is_day = False
 	for jour in days_of_the_week:
 		if arg_day_txt[0:5] == jour[0:5]:
@@ -64,10 +68,10 @@ def is_day_name(arg_day_txt):
 	return is_day
 
 # converti le nom d'un mois en int (Janvier=1, ...)
-def month_txt_to_int(mois_txt):
+def month_txt_to_int(arg_month_txt):
 	i = 1
 	for month in months_of_the_year:
-		if month[0:4] == mois_txt[0:4]:
+		if month[0:4].lower() == arg_month_txt[0:4].lower():
 			if len(str(i)) == 2:
 				return i
 			else:
@@ -78,18 +82,25 @@ def month_txt_to_int(mois_txt):
 # renvoi le décalage horaire avec GMT, -1 en hiver -2 en été
 def calc_heure_ete_hiver(annee, mois, jour, heure, minute, seconde):
 	heure_input=datetime(annee, mois, jour, heure, minute, seconde)
+	#local_tnz = pytz.reference.LocalTimezone() # tz de l'ordinateur
 	local_tnz = pytz.timezone("Europe/Paris") # tz de Paris
-	#local_tnz = pytz.reference.LocalTimezone() # tz de l'ordinateur à décommenter pour avoir l'heure local
 	decal_heure_ete_hiver_gmt = local_tnz.utcoffset(heure_input)
 	decal_heure_ete_hiver_gmt = -int(decal_heure_ete_hiver_gmt.seconds/3600)
 	return decal_heure_ete_hiver_gmt
 
+#renvoie le nom de l'intervenante
+def find_name_inter(ligne_txt):
+	r=0
+	i = len(ligne_txt)-1
+	while i != 0:
+		if (ligne_txt[i].isdigit()):
+			r = i
+			return str(ligne_txt[r+2:r+30])
+		i -= 1
+	return False
+	
 # création d'un objet lecteur pdf
-try:
-	reader = PdfReader(file_name_pdf)
-except:
-	print("Pas de fichier au nom de "+file_name_pdf)
-	sys.exit()
+reader = PdfReader(file_name_pdf)
 
 # récupérer la première page du pdf (0=1ère page)
 page = reader.pages[0]
@@ -97,7 +108,6 @@ page = reader.pages[0]
 # extraction du texte de la page
 text = page.extract_text()
 if debug:
-	print("############### texte brut du pdf ###############")
 	print(text)
 result_par_ligne = []
 index = 0
@@ -111,15 +121,81 @@ while x != -1:
 		text=text[x+1:-1]
 	index = index+1
 
-def find_name_inter(ligne_txt):
-	r=0
-	i = len(ligne_txt)-1
-	while i != 0:
-		if (ligne_txt[i].isdigit()):
-			r = i
-			return str(ligne_txt[r+2:r+30])
-		i -= 1
-	return False
+#Ajout manuel remplace le pdf
+result_par_ligne = ["Mercredi 01 Mai de 10h45 à 12h15 01h30 RICHARD Tristan"]
+result_par_ligne.insert(99,"Mercredi 01 Mai de 19h00 à 19h30 00h30 RICHARD Tristan")
+result_par_ligne.insert(99,"Jeudi 02 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
+result_par_ligne.insert(99,"Jeudi 02 Mai de 12h00 à 12h30 00h30 RICHARD Tristan")
+result_par_ligne.insert(99,"Jeudi 02 Mai de 19h15 à 19h45 00h30 RICHARD Tristan")
+result_par_ligne.insert(99,"Vendredi 03 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
+result_par_ligne.insert(99,"Vendredi 03 Mai de 12h30 à 13h00 00h30 RICHARD Tristan")
+result_par_ligne.insert(99,"Samedi 04 Mai de 10h30 à 12h00 01h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Dimanche 05 Mai de 10h30 à 12h00 01h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Dimanche 05 Mai de 19h00 à 19h30 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"dimanche 06 mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 06 Mai de 11h15 à 11h45 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 06 Mai de 18h45 à 19h15 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Mardi 07 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Mardi 07 Mai de 12h00 à 12h30 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Mardi 07 Mai de 18h45 à 19h15 00h30 TERTRAIS Franck")
+result_par_ligne.insert(99,"Mercredi 08 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mercredi 08 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Jeudi 09 Mai de 10h45 à 12h15 01h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Jeudi 09 Mai de 19h00 à 19h30 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Vendredi 10 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
+result_par_ligne.insert(99,"Vendredi 10 Mai de 12h00 à 12h30 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Samedi 11 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"dimanche 12 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"dimanche 12 Mai de 18h45 à 19h15 00h30 DIATTA Rolande")
+result_par_ligne.insert(99,"Lundi 13 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 13 Mai de 11h45 à 12h15 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 13 Mai de 18h45 à 19h15 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 13 Mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mardi 14 mai de 13h00 à 13h30 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Mardi 14 mai de 18h15 à 18h45 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mercredi 15 mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Mercredi 15 Mai de 12h00 à 12h30 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mercredi 15 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Jeudi 16 Mai de 08h30 à 10h15 01h45 DIATTA Rolande")
+result_par_ligne.insert(99,"Jeudi 16 Mai de 12h00 à 12h30 00h30 DIATTA Rolande")
+result_par_ligne.insert(99,"Jeudi 16 Mai de 19h00 à 19h30 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Vendredi 17 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
+result_par_ligne.insert(99,"Vendredi 17 Mai de 12h30 à 13h00 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Samedi 18 Mai de 11h00 à 12h30 01h30 EVRARD Maeva")
+result_par_ligne.insert(99,"dimanche 19 Mai de 10h30 à 12h00 01h30 EVRARD Maeva")
+result_par_ligne.insert(99,"dimanche 19 Mai de 18h45 à 19h15 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 20 Mai de 10h30 à 12h00 01h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Lundi 20 Mai de 19h00 à 19h30 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mardi 21 mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mardi 21 Mai de 12h30 à 13h00 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Mardi 21 mai de 18h15 à 18h45 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mercredi 22 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Mercredi 22 Mai de 13h00 à 13h30 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mercredi 22 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Jeudi 23 Mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Jeudi 23 Mai de 12h00 à 12h30 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Jeudi 23 Mai de 19h00 à 19h30 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Vendredi 24 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Vendredi 24 Mai de 12h15 à 12h45 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Samedi 25 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"dimanche 26 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"dimanche 26 Mai de 18h45 à 19h15 00h30 DIATTA Rolande")
+result_par_ligne.insert(99,"Lundi 27 Mai de 08h45 à 10h30 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 27 Mai de 11h45 à 12h15 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Lundi 27 Mai de 19h00 à 19h30 00h30 TERTRAIS Franck")
+result_par_ligne.insert(99,"Mardi 28 Mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mardi 28 mai de 12h30 à 13h00 00h30 EVRARD Maeva")
+result_par_ligne.insert(99,"Mardi 28 mai de 18h15 à 18h45 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Mercredi 29 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Mercredi 29 Mai de 12h15 à 12h45 00h30 RICHARD Tristan")
+result_par_ligne.insert(99,"Mercredi 29 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
+result_par_ligne.insert(99,"Jeudi 30 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
+result_par_ligne.insert(99,"Jeudi 30 Mai de 12h00 à 12h30 00h30 RICHARD Tristan")
+result_par_ligne.insert(99,"Jeudi 30 Mai de 19h00 à 19h30 00h30 TERTRAIS Franck")
+result_par_ligne.insert(99,"Vendredi 31 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
+result_par_ligne.insert(99,"Vendredi 31 Mai de 12h30 à 13h00 00h30 JACQUELIN GROSSE Stephanie")
+
+
 
 # ouverture du fichier d'enregistrement
 f = open(file_name_ics, "w")
@@ -157,36 +233,30 @@ f.write("END:VTIMEZONE\n")
 for ligne in result_par_ligne:
 	if debug:
 		print("############### nouvelle boucle ###############")
-		print("is_day_name()="+str(is_day_name(ligne)))
-		
+		print("is_day_name :"+str(is_day_name(ligne)))
 	# si la ligne commence par le nom d'un jour de semaine
 	if is_day_name(ligne):
 		if debug:
 			print("ligne agenda :"+ligne)
-			
 		#récupération du nom du jour de la semaine 
 		nom_jour = days_of_the_week[day_txt_to_int(ligne)]
 		if debug:
 			print("index jour :"+str(day_txt_to_int(ligne)))
 			print("nom_jour :"+str(nom_jour))
-			
 		# calcul de la longeur du nom de la semaine pour un futur parsing
 		len_jour = len(nom_jour)
-		
 		# extraction du numéro du jour
 		num_jour = ligne[len_jour+1:len_jour+3]
 		if debug:
 			print("num_jour :"+num_jour)
-			
 		# extraction des 4 1ère lettres du nom du mois
 		nom_mois = ligne[len_jour+4:len_jour+8]
 		if debug:
 			print("nom_mois 4char :"+str(nom_mois))
-		
 		# conversion du nom du mois en int
 		num_mois = month_txt_to_int(nom_mois)
 		if num_mois == False:
-			print("ERREUR : parsing mois "+nom_mois+" n'est pas un nom de mois")
+			print("ERROR : parsing month "+nom_mois+" is not name of month")
 			f.close()
 			sys.exit()
 		if debug:
@@ -229,8 +299,8 @@ for ligne in result_par_ligne:
 		if str_debut_heure.isdigit() == False or int(str_debut_heure)>24:
 			print("ERREUR : parsing heure de début. "+str_debut_heure+" n'est pas un entier ou est supérieur à 24, ligne :"+ligne)
 			f.close()
-			sys.exit()
-			
+			sys.exit()	
+				
 		# mise à l'heure GMT
 		int_debut_heure = int(str_debut_heure)+decal_heure_ete_hiver_gmt
 		str_debut_heure = str(int_debut_heure)
@@ -245,13 +315,13 @@ for ligne in result_par_ligne:
 		str_debut_minute = ligne[index_debut_heure+1:index_debut_heure+3]
 		if debug:
 			print("minute debut :"+str_debut_minute)
-		
+			
 		# détection d'erreur
 		if str_debut_minute.isdigit() == False or int(str_debut_minute)>59:
 			print("ERREUR : parsing minutes de début, line :"+ligne)
 			f.close()
 			sys.exit()
-		
+			
 		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et mise à l'heure GMT
 		index_fin_heure=ligne.find("h",index_debut_heure+1)
 		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])+decal_heure_ete_hiver_gmt
@@ -285,7 +355,7 @@ for ligne in result_par_ligne:
 			print("ERROR : hour ending befor hour begin , line :"+ligne)
 			f.close()
 			sys.exit()
-			
+		
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
 		str_data_dstart = year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00Z"
 		if verbose or debug:
