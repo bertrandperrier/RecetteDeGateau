@@ -12,7 +12,7 @@ import pytz.reference
 import os.path
 
 # email de l'agenda
-email_for_ics = 'karinebertrandcheppa@gmail.com'
+email_for_ics = 'xxxxxxxxxxxxxxx@xxxxxx.xxx'
 
 # notification nombre d'heure avant evenement
 reminder_delay_hour = "0"
