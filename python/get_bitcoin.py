@@ -27,13 +27,13 @@ fichier.close()
 
 code_html = url.urlopen('https://www.coinhouse.com/fr/cours-bitcoin/').read()
 
-index = code_html.find(b'data-currency="EUR"')
+index = code_html.find(b'data-unit-price="')
 if verbose:
-	print('CoinHouse')
-	#print(code_html[index+26:index+32])
-CH=int(code_html[index+26:index+28]+code_html[index+29:index+32])
-if verbose:
-	print(CH)
+	print("BITCOIN")
+	print("code html : ")
+	print(code_html[index+17:index+22])
+CH=int(code_html[index+17:index+22])
+
 
 #code_html = urllib.urlopen('https://www.google.com/finance/quote/BTC-EUR').read()
 
@@ -44,23 +44,24 @@ if verbose:
 #GO=int(code_html[index+15:index+17]+code_html[index+18:index+21])
 if verbose:
 	#print GO
-	print('achete   a 35549 32872')
-	print('rentable a 36588')
-	print('vendre   a 50000')
+	print('achete   à 35549 et 32872')
+	print('rentable à 36588')
+	print('vendre   à 50000')
+	print('vendu    à 62000')
 
 #ni gain ni perte
 #if CH > 38262:
 #mise double
+"""
 if CH > 50000:
 	if verbose:
 		print("50000 soit 273,3 euros")
 	else:
 		lib_send_mail_laposte.EnvoyerEmail("Bitcoin haut", "vendre\nValeur BC : "+str(CH)+"\ngain minimum 73,30")
-		
-
+"""
 if verbose:
-	print('CoinHouse:'+str(CH))
-	print('Valeur basse:'+str(valeur_basse))
+	print('CoinHouse : '+str(CH))
+	print('Valeur basse : '+str(valeur_basse))
 	
 
 	
@@ -75,9 +76,15 @@ if int(CH) < int(valeur_basse):
 	else:
 		lib_send_mail_laposte.EnvoyerEmail("Bitcoin bas", "valeur basse \nValeur BC : "+str(CH)+"\nAcheter des bitcoins")
 
-if CH > 36588:
+#if CH < 50000 and CH > 36588:
+#	if verbose:
+#		print("investissement rentable patienter")
+#	else:
+#		lib_send_mail_laposte.EnvoyerEmail("Bitcoin rentable", "investissement rentable patienter \nValeur BC : "+str(CH)+"\nvendre a 50 000")
+
+if CH < 36588:
 	if verbose:
 		print("investissement rentable patienter")
 	else:
-		lib_send_mail_laposte.EnvoyerEmail("Bitcoin rentable", "investissement rentable patienter \nValeur BC : "+str(CH)+"\nvendre a 50 000")
+		lib_send_mail_laposte.EnvoyerEmail("Bitcoin rentable", "acheter des BTC : cour bas\nValeur BC : "+str(CH))
 		
