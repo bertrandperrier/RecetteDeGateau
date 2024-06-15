@@ -1,30 +1,22 @@
 #!/bin/bash
 # 18/02/2024
 # ce script modifie la date "de mofication" par la "date de la prise" Exif "Image timestamp"
-if [ "$1" = "" ]
-then
-	echo -n "saisir le nom du fichier
-"
-	exit 0
-fi
+# 16/06/2024 fichier a placer dans /home/$USER/.local/share/nemo/scripts/ ce qui fera apparaitre le menu clic-droit>Script>maj_date_jpg
 
-if ! [ -f "$1" ]
-then
-	echo "Le fichier n'existe pas !"
-	exit 0
-fi
+notify-send "Traitement en cours..."
 
-if ! [ $(mimetype -b "$1") = "image/jpeg" ]
-then
-	echo "Le fichier n'est pas au format jpg"
-	exit 0
-fi
-
-filename=$1
-time=$(exiv2 $filename  | grep timestamp | cut -d " " -f5)
-date=$(exiv2 $filename  | grep timestamp | cut -d " " -f4)
-date=$(echo $date | sed 's/:/-/g')
-datetime="${date} ${time}"
-touch -d "${datetime}" $filename
-echo "date de modification du fichier modifiée"
+for selected_uri in $NEMO_SCRIPT_SELECTED_FILE_PATHS; do
+	if ! [ $(mimetype -b "$selected_uri") = "image/jpeg" ]
+	then
+		notify-send "Un fichier n'est pas au format jpg"
+		exit 0
+	else
+		time=$(exiv2 $selected_uri  | grep timestamp | cut -d " " -f5)
+		date=$(exiv2 $selected_uri  | grep timestamp | cut -d " " -f4)
+		date=$(echo $date | sed 's/:/-/g')
+		datetime="${date} ${time}"
+		touch -d "${datetime}" $selected_uri
+	fi
+done
+notify-send "date de modification du fichier modifiée"
 
