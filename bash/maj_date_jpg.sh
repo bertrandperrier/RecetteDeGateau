@@ -14,7 +14,7 @@ then
 	exit 0
 fi
 
-if ! [ $(mimetype -b "$1") == "image/jpeg" ]
+if ! [ $(mimetype -b "$1") = "image/jpeg" ]
 then
 	echo "Le fichier n'est pas au format jpg"
 	exit 0
