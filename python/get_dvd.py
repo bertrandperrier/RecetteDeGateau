@@ -35,6 +35,7 @@ else:
 			
 # recuperation code html du site
 url = 'https://www.allocine.fr/dvd/nouveau/'
+url = 'https://www.allocine.fr/film/sorties-semaine/'
 
 if verbose >= 1:
 	print("source : "+url)
@@ -50,28 +51,31 @@ x = 0
 erreur_extract_date = False
 
 # faire 15 fois
-while (x < 15 and index != -1):
+while (True):
 	if verbose >= 2:
-		print("Boucle "+str(x))
+		print("\nBoucle "+str(x))
+	
 	# recherche de la prochaine balise
 	index = code_page_html.find('.html">')
 	if verbose >= 2:
 		print("Index : "+str(index))
+	if index == -1 or x>=22:
+		break
 	# on garde la ligne du resultat du titre
 	index_titre_debut = code_page_html[index+7:index+150]
 	if verbose >= 2:
-		print(index_titre_debut)
+		print("DEBUT "+index_titre_debut+" FIN")
 
 	# on affiche le titre, mais pas la balise de fin
 	titre_html = code_page_html[index+7:index+7+index_titre_debut.find('</a>')]
 	if verbose >= 2:
-		print("L65 "+titre_html)
+		print("L72 "+titre_html)
 	# on enlève les balises html
 	#titre_str = html.unescape(titre_html)
 	titre_str = titre_html
 	titre_str = str(titre_str)
 	if verbose >= 2:
-		print("L71 "+titre_str)
+		print("L78 "+titre_str)
 
 	#on enleve un peu de caracteres
 	code_page_html=code_page_html[index+7+index_titre_debut.find('</a>'):-1]
@@ -79,27 +83,28 @@ while (x < 15 and index != -1):
 	# on affiche la date de sortie
 	# on enlevre le début de chaine en trop
 
-	index_date_debut = code_page_html.find('meta-body')
+	index_date_debut = code_page_html.find('<span class="date">')
 	
-	date_str = code_page_html[index_date_debut+77:index_date_debut+500]
-		
+	date_str = code_page_html[index_date_debut+1:index_date_debut+500]
+	if verbose >= 2:
+		print("L91 DATE_STR : " + date_str)
+	
 	# on enleve Bluray si present
 	if date_str.find('Bluray') != -1:
-		#print(date_str)
-		date_str = date_str[13:-1]
+		date_str = date_str[10:-1]
 	# on enleve la fin de chaine en trop
 	index_date_fin = date_str.find('<')
-	date_str = date_str[0:index_date_fin-1]
+	date_str = date_str[18:index_date_fin]
 	
 	if verbose >= 2:
-		print("L92 " + date_str)
+		print("L99 " + date_str)
 	
 	#tant que ca commence pas par un numéro isdigit isalpha
 	while (date_str[0] == " " or date_str[0].isalpha()):
 		date_str = date_str[1:]
 		
 	if verbose >= 2:
-		print("L99 " + date_str)
+		print("L106 " + date_str)
 		
 	# on enleve le slash n detecte a la fin
 	if(date_str.find("\n") > 5 and date_str.find("\n") != -1 and date_str.find("\n") != 0):
@@ -108,7 +113,7 @@ while (x < 15 and index != -1):
 		date_str = date_str[0:date_str.find("\n")]
 		
 	if verbose >= 2:
-		print("L108 " + date_str)
+		print("L115 " + date_str)
 	
 	# on enleve le slash du debut
 	if(date_str.find("\n") < 5 and date_str.find("\n") != -1):
@@ -118,7 +123,7 @@ while (x < 15 and index != -1):
 		date_str = date_str[date_str.find("\n")+1:]
 		
 	if verbose >= 2:
-		print("L118 " + date_str)
+		print("L125 " + date_str)
 
 	# A FAIRE ENLEVER LE SLASH N EN FIN DE STRING
 	if(date_str.find("\n") >5 and date_str.find("\n") != -1):
@@ -131,14 +136,17 @@ while (x < 15 and index != -1):
 		date_str = date_str[1:]
 
 	if verbose >= 2:
-		print("L131 " + date_str)	
+		print("L138 " + date_str)	
 	try:
 		date_sortie_datetime = datetime.strptime(date_str, '%d %B %Y')
 	except ValueError as inst:
 		if verbose >= 1:
-			print("Erreur extraction date "+str(inst.args))
+			print("Erreur extraction date : ", inst)
 		erreur_extract_date = True
-		
+	if verbose >= 2:
+		print("L148 date_sortie_datetime : "+str(date_sortie_datetime))
+	
+	# s'il n'y a pas de date, on passe au titre suivant
 	if (not erreur_extract_date):
 		date_sortie_datetime = str(date_sortie_datetime)
 		date_sortie_datetime = date_sortie_datetime[0:10]
