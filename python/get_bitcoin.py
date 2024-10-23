@@ -27,13 +27,12 @@ fichier.close()
 
 code_html = url.urlopen('https://www.coinhouse.com/fr/cours-bitcoin/').read()
 
-index = code_html.find(b'data-unit-price="')
+index = code_html.find(b'font-medium font-dm-sans-36 text-32 flex flex-row flex-wrap gap-3">')
 if verbose:
 	print("BITCOIN")
 	print("code html : ")
-	print(code_html[index+17:index+22])
-CH=int(code_html[index+17:index+22])
-
+	print(code_html[index+67:index+69]+code_html[index+70:index+73])
+CH=int(code_html[index+67:index+69]+code_html[index+70:index+73])
 
 #code_html = urllib.urlopen('https://www.google.com/finance/quote/BTC-EUR').read()
 
