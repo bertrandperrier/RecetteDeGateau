@@ -12,11 +12,7 @@ import pytz.reference
 import os.path
 
 # email de l'agenda
-<<<<<<< HEAD
 email_for_ics = 'xxxxxxx@xxxxxx.xxx'
-=======
-email_for_ics = 'xxxxxxxxxxxxxxx@xxxxxx.xxx'
->>>>>>> 6265be1c8a817dbf7da19b3e00d5802328a04dca
 
 # notification nombre d'heure avant evenement
 reminder_delay_hour = "0"
@@ -58,6 +54,8 @@ def day_txt_to_int(arg_day_txt):
 			print("jours[0:2] :"+str(jours[0:2]))
 			print("arg_day_txt[0:2] :"+str(arg_day_txt[0:2]))
 		if jours[0:2].lower() == arg_day_txt[0:2].lower():
+			if debug:
+				print("fct return : "+str(i))
 			return i
 		i=i+1
 	return False
@@ -125,82 +123,6 @@ while x != -1:
 		text=text[x+1:-1]
 	index = index+1
 
-#Ajout manuel remplace le pdf
-result_par_ligne = ["Mercredi 01 Mai de 10h45 à 12h15 01h30 RICHARD Tristan"]
-result_par_ligne.insert(99,"Mercredi 01 Mai de 19h00 à 19h30 00h30 RICHARD Tristan")
-result_par_ligne.insert(99,"Jeudi 02 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
-result_par_ligne.insert(99,"Jeudi 02 Mai de 12h00 à 12h30 00h30 RICHARD Tristan")
-result_par_ligne.insert(99,"Jeudi 02 Mai de 19h15 à 19h45 00h30 RICHARD Tristan")
-result_par_ligne.insert(99,"Vendredi 03 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
-result_par_ligne.insert(99,"Vendredi 03 Mai de 12h30 à 13h00 00h30 RICHARD Tristan")
-result_par_ligne.insert(99,"Samedi 04 Mai de 10h30 à 12h00 01h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Dimanche 05 Mai de 10h30 à 12h00 01h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Dimanche 05 Mai de 19h00 à 19h30 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"dimanche 06 mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 06 Mai de 11h15 à 11h45 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 06 Mai de 18h45 à 19h15 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Mardi 07 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Mardi 07 Mai de 12h00 à 12h30 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Mardi 07 Mai de 18h45 à 19h15 00h30 TERTRAIS Franck")
-result_par_ligne.insert(99,"Mercredi 08 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mercredi 08 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Jeudi 09 Mai de 10h45 à 12h15 01h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Jeudi 09 Mai de 19h00 à 19h30 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Vendredi 10 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
-result_par_ligne.insert(99,"Vendredi 10 Mai de 12h00 à 12h30 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Samedi 11 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"dimanche 12 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"dimanche 12 Mai de 18h45 à 19h15 00h30 DIATTA Rolande")
-result_par_ligne.insert(99,"Lundi 13 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 13 Mai de 11h45 à 12h15 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 13 Mai de 18h45 à 19h15 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 13 Mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mardi 14 mai de 13h00 à 13h30 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Mardi 14 mai de 18h15 à 18h45 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mercredi 15 mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Mercredi 15 Mai de 12h00 à 12h30 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mercredi 15 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Jeudi 16 Mai de 08h30 à 10h15 01h45 DIATTA Rolande")
-result_par_ligne.insert(99,"Jeudi 16 Mai de 12h00 à 12h30 00h30 DIATTA Rolande")
-result_par_ligne.insert(99,"Jeudi 16 Mai de 19h00 à 19h30 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Vendredi 17 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
-result_par_ligne.insert(99,"Vendredi 17 Mai de 12h30 à 13h00 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Samedi 18 Mai de 11h00 à 12h30 01h30 EVRARD Maeva")
-result_par_ligne.insert(99,"dimanche 19 Mai de 10h30 à 12h00 01h30 EVRARD Maeva")
-result_par_ligne.insert(99,"dimanche 19 Mai de 18h45 à 19h15 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 20 Mai de 10h30 à 12h00 01h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Lundi 20 Mai de 19h00 à 19h30 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mardi 21 mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mardi 21 Mai de 12h30 à 13h00 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Mardi 21 mai de 18h15 à 18h45 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mercredi 22 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Mercredi 22 Mai de 13h00 à 13h30 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mercredi 22 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Jeudi 23 Mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Jeudi 23 Mai de 12h00 à 12h30 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Jeudi 23 Mai de 19h00 à 19h30 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Vendredi 24 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Vendredi 24 Mai de 12h15 à 12h45 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Samedi 25 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"dimanche 26 Mai de 10h00 à 11h30 01h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"dimanche 26 Mai de 18h45 à 19h15 00h30 DIATTA Rolande")
-result_par_ligne.insert(99,"Lundi 27 Mai de 08h45 à 10h30 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 27 Mai de 11h45 à 12h15 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Lundi 27 Mai de 19h00 à 19h30 00h30 TERTRAIS Franck")
-result_par_ligne.insert(99,"Mardi 28 Mai de 08h30 à 10h15 01h45 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mardi 28 mai de 12h30 à 13h00 00h30 EVRARD Maeva")
-result_par_ligne.insert(99,"Mardi 28 mai de 18h15 à 18h45 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Mercredi 29 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Mercredi 29 Mai de 12h15 à 12h45 00h30 RICHARD Tristan")
-result_par_ligne.insert(99,"Mercredi 29 Mai de 18h45 à 19h15 00h30 JACQUELIN GROSSE Stephanie")
-result_par_ligne.insert(99,"Jeudi 30 Mai de 08h30 à 10h15 01h45 RICHARD Tristan")
-result_par_ligne.insert(99,"Jeudi 30 Mai de 12h00 à 12h30 00h30 RICHARD Tristan")
-result_par_ligne.insert(99,"Jeudi 30 Mai de 19h00 à 19h30 00h30 TERTRAIS Franck")
-result_par_ligne.insert(99,"Vendredi 31 Mai de 08h30 à 10h15 01h45 EVRARD Maeva")
-result_par_ligne.insert(99,"Vendredi 31 Mai de 12h30 à 13h00 00h30 JACQUELIN GROSSE Stephanie")
-
-
-
 # ouverture du fichier d'enregistrement
 f = open(file_name_ics, "w")
 
@@ -243,12 +165,13 @@ for ligne in result_par_ligne:
 		if debug:
 			print("ligne agenda :"+ligne)
 		#récupération du nom du jour de la semaine 
-		nom_jour = days_of_the_week[day_txt_to_int(ligne)]
+		nom_jour_int = day_txt_to_int(ligne)
+		nom_jour_txt = days_of_the_week[nom_jour_int]
 		if debug:
-			print("index jour :"+str(day_txt_to_int(ligne)))
-			print("nom_jour :"+str(nom_jour))
+			print("index jour :"+str(nom_jour_int))
+			print("nom_jour_txt :"+nom_jour_txt)
 		# calcul de la longeur du nom de la semaine pour un futur parsing
-		len_jour = len(nom_jour)
+		len_jour = len(nom_jour_txt)
 		# extraction du numéro du jour
 		num_jour = ligne[len_jour+1:len_jour+3]
 		if debug:
@@ -363,12 +286,12 @@ for ligne in result_par_ligne:
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
 		str_data_dstart = year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00Z"
 		if verbose or debug:
-			print(str_data_dstart)
+			print("str_data_dstart :"+str_data_dstart)
 		
 		# concatenation des variables, mise au format ics/google de la date/heure de fin de l'évènement
 		str_data_end = year+str(num_mois)+str(num_jour)+"T"+str_fin_heure+str_fin_minute+"00Z"
 		if verbose or debug:
-			print(str_data_end)
+			print("   str_data_end :"+str_data_end)
 		
 		# extraction du nom de l'intervenante en fct de la longueur de chaine
 		str_nom_inter = find_name_inter(ligne)
@@ -380,7 +303,7 @@ for ligne in result_par_ligne:
 			sys.exit()
 		
 		if verbose or debug:
-			print("str_nom_inter :"+str_nom_inter)
+			print("  str_nom_inter :"+str_nom_inter)
 
 		# écriture de l'évènement au format ics/google dans le fichier file_name_ics
 		f.write("BEGIN:VEVENT\n")
@@ -405,11 +328,16 @@ for ligne in result_par_ligne:
 		f.write("TRIGGER:-P0DT"+reminder_delay_hour+"H"+reminder_delay_minute+"M0S\n")
 		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
-
-# pied de page au format ics
-f.write("END:VCALENDAR")
-# fermeture du fichier enregistré
-f.close()
-print("Fichier "+file_name_ics+" enregistré")
-print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
-# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
+	else:
+		print("######### ERREUR LECTURE DE LIGNE #########");
+		print("ligne -> "+ligne);
+		f.close()
+		sys.exit()
+if is_day_name(ligne):
+	# pied de page au format ics
+	f.write("END:VCALENDAR")
+	# fermeture du fichier enregistré
+	f.close()
+	print("Fichier "+file_name_ics+" enregistré")
+	print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
+	# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
