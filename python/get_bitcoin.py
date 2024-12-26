@@ -24,15 +24,31 @@ fichier.close()
 #if verbose:
 	#print BT
 
+adre='https://www.coinhouse.com/fr/cours-bitcoin/'
 
-code_html = url.urlopen('https://www.coinhouse.com/fr/cours-bitcoin/').read()
+req = url.Request(
+    adre, 
+    data=None, 
+    headers={
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+    }
+)
 
-index = code_html.find(b'font-medium font-dm-sans-36 text-32 flex flex-row flex-wrap gap-3">')
+
+
+code_html = url.urlopen(req).read()
+			 
+index = code_html.find(b'font-medium font-dm-sans-36 text-22 lg:text-32 flex flex-row flex-wrap gap-3">')
+if (index == -1):
+	print("index not found")
+	sys.exit()
 if verbose:
+	print("index")
+	print(index)
 	print("BITCOIN")
 	print("code html : ")
-	print(code_html[index+67:index+69]+code_html[index+70:index+73])
-CH=int(code_html[index+67:index+69]+code_html[index+70:index+73])
+	print(code_html[index+78:index+80]+code_html[index+81:index+84])
+CH=int(code_html[index+78:index+80]+code_html[index+81:index+84])
 
 #code_html = urllib.urlopen('https://www.google.com/finance/quote/BTC-EUR').read()
 
