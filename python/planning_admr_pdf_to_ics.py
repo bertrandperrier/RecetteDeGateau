@@ -329,10 +329,11 @@ for ligne in result_par_ligne:
 		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
 	else:
-		print("######### ERREUR LECTURE DE LIGNE #########");
-		print("ligne -> "+ligne);
-		f.close()
-		sys.exit()
+		if debug:
+			print("######### ERREUR LECTURE DE LIGNE #########");
+			print("ligne -> "+ligne);
+			#f.close()
+			#sys.exit()
 if is_day_name(ligne):
 	# pied de page au format ics
 	f.write("END:VCALENDAR")
