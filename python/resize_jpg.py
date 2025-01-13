@@ -30,7 +30,7 @@ if (not OneFileToResize and not arg_path[len(arg_path)-1:] == "/"):
 
 # verif si le dossier existe
 if not os.path.exists(arg_path):
-	print("Le dossier n'éxiste pas");
+	print("Le fichier ou dossier n'éxiste pas");
 	print("Action annulée");
 	sys.exit();
 
