@@ -60,7 +60,6 @@ tabl_of_point_cardinal_labyrinthe = [['s',  'se',   'eo', 'so',   'se',  'seo', 
 
 colonne, ligne = 6,7
 tab_gagne = [7, 6]
-dir_demandee = "s"
 """
 tabl_of_point_cardinal_labyrinthe = [['e',  'eo',   'eo', 'eo',   'eo',  'eo', 'so'],
 					['ns',  'ns',  'se', 'no',   'ns',  'ns',  'ns'],
@@ -80,10 +79,9 @@ tabl_of_point_cardinal_labyrinthe =    [['e',  'eo',   'seo',  'eo',   'seo',  '
 					['ns',  'ns',  'ns',   'ns',   's',    'se',  'nso'],
 					['ns',  'n',   'ns',   'ns',   'ne',   'no',  'ns'],
 					['ne',  'eo',  'no',   'ne',   'eo',   'eo',  'no']]
-"""
-#y, x de 0 à 
+
 tab_gagne = [7, 6]
-dir_demandee = "o"
+"""
 
 if len(sys.argv) > 1:
 	if sys.argv[1] == "-v":
@@ -101,30 +99,32 @@ print("|   | | | | | |")
 print("| | |_| |_| | |")
 print("| |____  ___| |")
 print("|___________|x|")
-
+print("\n\n\n\n\n")
 dessin=""
-print("__________________")
-for i in range(ligne):
-		for j in range(colonne):
+print("   0  1  2  3  4  5  6 ")
+print("  _____________________")
+for i in range(ligne+1):
+		dessin+=str(i)+" "	
+		for j in range(colonne+1):
 			match tabl_of_point_cardinal_labyrinthe[i][j]:
 				case "n":	dessin+="|_|"
 				case "s":	dessin+="| |"
-				case "e":	dessin+="|= "
-				case "o":	dessin+=" =|"
+				case "e":	dessin+="|_ "
+				case "o":	dessin+="__|"
 				case "se":	dessin+="|  "
-				case "eo":	dessin+=" = "
+				case "eo":	dessin+="___"
 				case "so":	dessin+="  |"
 				case "ns":	dessin+="| |"
-				case "no":	dessin+=" _|"
-				case "ne":	dessin+="|_ xxx"
+				case "no":	dessin+="__|"
+				case "ne":	dessin+="|__"
 				case "nso":	dessin+="  |"
 				case "nse":	dessin+="|  "
 				case "seo":	dessin+="   "
-				case "neo":	dessin+=" _ "
+				case "neo":	dessin+="___"
 				case "nseo":	dessin+="   "
 		print(dessin)
 		dessin = ""
-print("------------------")
+#print("------------------")
 print("\nDirections\n z\nq+d\n s\n\nx pour quitter\n")
 
 if verbose:
@@ -137,7 +137,7 @@ input("Entrer pour commencer")
 
 mode = input("mode Manuel ou Automatique (M/a)")
 
-if (mode == "A"):
+if (mode == "A" or mode == "a"):
 	mode = "a"
 else:
 	mode =  "m"
@@ -171,10 +171,18 @@ while(1):
 		case "nseo":	print(" \n o\n")
 
 	# check sortie du labyrinthe
-	if (tab_emplacement[0] == tab_gagne[0] and tab_emplacement[1] == tab_gagne[1]):
+	if (tab_emplacement == tab_gagne):
 		print("gagné")
 		print("nb_depl : "+str(nb_depl))
 		quit()
+	
+	# aff infos
+	if 'key' in locals():
+		print("dir : "+key)
+	if 'dir_demandee' in locals():
+		print("dir_demandee : "+dir_demandee)
+	print("dir_prec_demandee : "+dir_prec_demandee)
+	print("nb_depl : "+str(nb_depl))
 	
 	if (mode == "m"):
 		#saisie de la direction
@@ -197,7 +205,7 @@ while(1):
 
 		
 	
-		
+	# mode auto. Choix de la future direction
 	if (mode == "a"):
 		match tabl_of_point_cardinal_labyrinthe[tab_emplacement[0]][tab_emplacement[1]]:
 			case "n":	key = "z"
@@ -243,15 +251,12 @@ while(1):
 				if (dir_prec_demandee=="s"): key = "d"
 				if (dir_prec_demandee=="e"): key = "z"
 				if (dir_prec_demandee=="o"): key = "s"
-		
-	print("dir : "+key)
-	print("dir_demandee : "+dir_demandee)
-	print("dir_prec_demandee : "+dir_prec_demandee)
-	print("nb_depl : "+str(nb_depl))
+
 	
 	if (mode == "a"):
 		time.sleep(0.5)
-	
+
+	#convertion dir. touches -> dir. cardinaux
 	if key == "z":
 		dir_demandee="n"
 	if key == "q":
@@ -264,7 +269,7 @@ while(1):
 		quit()
 	dir_prec_demandee=dir_demandee
 
-	# si déplacement autorisé -> déplacement demandé
+	# si déplacement autorisé -> exec. déplacement demandé
 	if (autor_depl(tab_emplacement, dir_demandee)):
 		tab_emplacement=depl(tab_emplacement, dir_demandee)
 		nb_depl=nb_depl+1
