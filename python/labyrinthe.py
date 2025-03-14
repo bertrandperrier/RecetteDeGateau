@@ -31,7 +31,6 @@ def depl(tab_emplacement, dir_demandee):
 		case "o":
 			if (tab_emplacement[1]>=1):
 				tab_emplacement[1]=tab_emplacement[1]-1
-
 	return tab_emplacement
 
 def readchar() -> str:
@@ -69,7 +68,7 @@ tabl_of_point_cardinal_labyrinthe = [['e',  'eo',   'eo', 'eo',   'eo',  'eo', '
 					['ns',  'ns',  'n',  'ns',   'n',   'ns',  'ns'],
 					['ns',  'ne',  'eo', 'nseo', 'eo',  'no',  'ns'],
 					['ne',  'eo',  'eo', 'neo',  'eo',  'o',   'n']]
-
+"""
 
 tabl_of_point_cardinal_labyrinthe =    [['e',  'eo',   'seo',  'eo',   'seo',  'eo',  'so'],
 					['se',  'o',   'ns',   's',    'ns',   's',   'ns'],
@@ -81,7 +80,7 @@ tabl_of_point_cardinal_labyrinthe =    [['e',  'eo',   'seo',  'eo',   'seo',  '
 					['ne',  'eo',  'no',   'ne',   'eo',   'eo',  'no']]
 
 tab_gagne = [7, 6]
-"""
+
 
 if len(sys.argv) > 1:
 	if sys.argv[1] == "-v":
@@ -101,8 +100,23 @@ print("| |____  ___| |")
 print("|___________|x|")
 print("\n\n\n\n\n")
 dessin=""
-print("   0  1  2  3  4  5  6 ")
-print("  _____________________")
+dessin="   "
+
+# aff numérotation des colonnes
+for i in range(colonne+1):
+	dessin+=str(i)+"  "
+print(dessin)
+dessin=""
+
+# aff bordure 1ère ligne
+dessin="  _"
+for i in range(colonne):
+	dessin+="___"
+dessin+="__"
+print(dessin)
+dessin=""
+
+# aff labyrinthe
 for i in range(ligne+1):
 		dessin+=str(i)+" "	
 		for j in range(colonne+1):
@@ -124,7 +138,7 @@ for i in range(ligne+1):
 				case "nseo":	dessin+="   "
 		print(dessin)
 		dessin = ""
-#print("------------------")
+
 print("\nDirections\n z\nq+d\n s\n\nx pour quitter\n")
 
 if verbose:
@@ -133,15 +147,14 @@ if verbose:
 		for j in range(colonne):
 			print("L:"+str(i)+" C:"+str(j)+" "+str(tabl_of_point_cardinal_labyrinthe[i][j]))
 
-input("Entrer pour commencer")
-
-mode = input("mode Manuel ou Automatique (M/a)")
-
+#Choix du mode
+mode = input("mode Manuel ou Automatique (M/a) : ")
 if (mode == "A" or mode == "a"):
 	mode = "a"
 else:
 	mode =  "m"
 
+input("Entrer pour commencer")
 
 while(1):
 	# effacement de l'écran
@@ -172,8 +185,7 @@ while(1):
 
 	# check sortie du labyrinthe
 	if (tab_emplacement == tab_gagne):
-		print("gagné")
-		print("nb_depl : "+str(nb_depl))
+		print("gagné en "+str(nb_depl)+" déplacements")
 		quit()
 	
 	# aff infos
@@ -183,6 +195,7 @@ while(1):
 		print("dir_demandee : "+dir_demandee)
 	print("dir_prec_demandee : "+dir_prec_demandee)
 	print("nb_depl : "+str(nb_depl))
+	if (mode == "a"): print("empl : "+str(tab_emplacement))
 	
 	if (mode == "m"):
 		#saisie de la direction
@@ -203,8 +216,6 @@ while(1):
 			if key == "x":
 				quit()
 
-		
-	
 	# mode auto. Choix de la future direction
 	if (mode == "a"):
 		match tabl_of_point_cardinal_labyrinthe[tab_emplacement[0]][tab_emplacement[1]]:
@@ -252,9 +263,9 @@ while(1):
 				if (dir_prec_demandee=="e"): key = "z"
 				if (dir_prec_demandee=="o"): key = "s"
 
-	
+	# vitesse du mode automatique	
 	if (mode == "a"):
-		time.sleep(0.5)
+		time.sleep(0.1)
 
 	#convertion dir. touches -> dir. cardinaux
 	if key == "z":
