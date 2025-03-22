@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+# inspiré de https://www.youtube.com/watch?v=ww6kO3eE4bo
+
 import os
 import time
 import sys
@@ -7,6 +10,16 @@ import termios
 
 # 24Lx32C
 position_perso = [22,5] #[5, 24]
+
+#position_tonneau1_init = [8, 22]
+#position_tonneau2_init = [1, 20]
+
+def position_tonneau1_init():
+    return [8, 22]
+
+def position_tonneau2_init():
+    return [1, 20]
+
 position_tonneau1 = [8, 22]
 position_tonneau2 = [1, 20]
 game = [['S','C','O','R','E','=','0','0','0','0','0',' ','M','E','N','=','1',' ','H','I','-','S','C','O','R','E','=','3','6','6','0','0','\n'],
@@ -26,7 +39,7 @@ game = [['S','C','O','R','E','=','0','0','0','0','0',' ','M','E','N','=','1',' '
 ['_','_','H','_','_','_',' ','_','_','_','H','_','_','_','_','_','_','_',' ','_','_','_','_','_','_','_','_','_','H','_','_','_','\n'],
 [' ',' ',' ',' ',' ',' ','H',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','H',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\n'],
 [' ',' ',' ',' ',' ',' ','H',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','H',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\n'],
-['_','_','_','_','_','_','H','_','_','_',' ','_','_','_','_','_','_','_','H','_','_','_','_','_','_','_','_','_','_','_','_','_','\n'],
+['_','_','_','_','_','_','H','_','_','_',' ',' ','_','_','_','_','_','_','H','_','_','_','_','_','_','_','_','_','_','_','_','_','\n'],
 [' ',' ',' ','H',' ',' ',' ',' ',' ',' ','H',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\n'],
 [' ',' ',' ','H',' ',' ',' ',' ',' ',' ','H',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\n'],
 ['_','_','_','H','_','_','_','_','_','_','H','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',' ','_','_','_',' ','\n'],
@@ -36,28 +49,43 @@ game = [['S','C','O','R','E','=','0','0','0','0','0',' ','M','E','N','=','1',' '
 
 
 
-lignes = len(game)
-colonnes = len(game[0])
+lignes = len(game) #24
+colonnes = len(game[0]) #33
+
 
 def display(tab_to_disp):
 	os.system('clear')
 	for lignes in tab_to_disp:
-		#print(len(lignes), end=" ")
 		for colonnes in lignes:
 			print(colonnes, end="")
 
 def readchar() -> str:
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    term = termios.tcgetattr(fd)
-    try:
-        term[3] &= ~(termios.ICANON | termios.ECHO | termios.IGNBRK | termios.BRKINT)
-        termios.tcsetattr(fd, termios.TCSAFLUSH, term)
+	fd = sys.stdin.fileno()
+	old_settings = termios.tcgetattr(fd)
+	term = termios.tcgetattr(fd)
+	try:
+		term[3] &= ~(termios.ICANON | termios.ECHO | termios.IGNBRK | termios.BRKINT)
+		termios.tcsetattr(fd, termios.TCSAFLUSH, term)
 
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+		ch = sys.stdin.read(1)
+	finally:
+		termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+	return ch
+
+
+def depl_tonneau(position_tonneau, position_tonneau_init, sens):
+	
+	if game[position_tonneau[0]][position_tonneau[1]] == " " or game[position_tonneau[0]+1][position_tonneau[1]] == "H":
+		position_tonneau[0] += 1 # depl verti
+	else:
+		if sens=="gauche":
+			position_tonneau[1] -= 1 # depl hori
+		else:
+			position_tonneau[1] += 1 # depl hori
+	if position_tonneau[1] == -1 or position_tonneau[1] >= colonnes-1:
+		return position_tonneau_init
+	else:
+		return position_tonneau
 
 
 while True:
@@ -89,45 +117,41 @@ while True:
 	game_to_disp[position_tonneau1[0]][position_tonneau1[1]]="o"
 	game_to_disp[position_tonneau2[0]][position_tonneau2[1]]="o"
 	display(game_to_disp)
-	print(position_tonneau2)
 
 	if position_perso == [3,22]:
 		print("Gagné")
 		sys.exit()
 
-	key = " " #readchar()
-	time.sleep(0.1)
+	if position_tonneau1 == position_perso or position_tonneau2 == position_perso:
+		print("Perdu")
+		sys.exit()
+		
+	key = readchar() #" "
+	#time.sleep(0.1)
 	match key:
 		case "z":
 			if (position_perso[0]>0) and (game[position_perso[0]-1][position_perso[1]]=="H" or game[position_perso[0]][position_perso[1]]=="H"):
 				position_perso[0]=position_perso[0]-1
 		case "q":
-			#if(game[position_perso[0]][position_perso[1]-1]!="_"):
-			#	input(str(position_perso[0])+" "+str(position_perso[1]-1)+":"+game[position_perso[0]][position_perso[1]-1])
+			# je vais à gauche si à gauche _ ou H ou si H en bas à gauche
 			if (position_perso[1]>0) and (game[position_perso[0]][position_perso[1]-1]=="_" or game[position_perso[0]][position_perso[1]-1]=="H" or game[position_perso[0]+1][position_perso[1]-1]=="H"):
 				position_perso[1]=position_perso[1]-1
 		case "d":
-			if (position_perso[1]<31) and (game[position_perso[0]][position_perso[1]+1]=="_" or game[position_perso[0]][position_perso[1]+1]=="H" or game[position_perso[0]+1][position_perso[1]+1]=="H"):
+			# je vais à droite si à droite _ ou H ou si H en bas à droite
+			if (position_perso[1]<colonnes-2) and (game[position_perso[0]][position_perso[1]+1]=="_" or game[position_perso[0]][position_perso[1]+1]=="H" or game[position_perso[0]+1][position_perso[1]+1]=="H"):
 				position_perso[1]=position_perso[1]+1
 		case "s":
-			if (position_perso[0]<23) and (game[position_perso[0]+1][position_perso[1]]=="H"):
+			if (position_perso[0]<lignes-1) and (game[position_perso[0]+1][position_perso[1]]=="H"):
 				position_perso[0]=position_perso[0]+1
 		case "x":
 			quit()
+	# si je croise un tonneau => perdu
+	if key == "d" and position_perso[0] == position_tonneau1[0] and position_perso[1] == position_tonneau1[1]-1:
+		print("Perdu, tonneau touché par la droite")
+		sys.exit()
+	if key == "d" and position_perso[0] == position_tonneau1[0] and position_perso[1] == position_tonneau1[1]+1:
+		print("Perdu, tonneau touché par la gauche")
+		sys.exit()
 	
-	if game[position_tonneau1[0]][position_tonneau1[1]] == " " or game[position_tonneau1[0]+1][position_tonneau1[1]] == "H":
-		position_tonneau1[0] += 1 # depl ligne
-	else:
-		position_tonneau1[1] -= 1 # depl verti
-	if position_tonneau1[1] == -1:
-		position_tonneau1 = [8, 22]
-		
-		
-	if game[position_tonneau2[0]][position_tonneau2[1]] == " " or game[position_tonneau2[0]+1][position_tonneau2[1]] == "H":
-		position_tonneau2[0] += 1 # depl ligne
-	else:
-		position_tonneau2[1] += 1 # depl verti
-	
-	if position_tonneau2[1] == 32:
-		position_tonneau2 = [1, 20]
-	
+	position_tonneau1 = depl_tonneau(position_tonneau1, position_tonneau1_init(), "gauche")
+	position_tonneau2 = depl_tonneau(position_tonneau2, position_tonneau2_init(), "droite")
