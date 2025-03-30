@@ -22,13 +22,10 @@ reminder_delay_minute = "5"
 
 file_name_pdf = "planning_admr.pdf"
 file_name_ics = "planning_admr.ics"
-year = "2024"
+
 # liste d'éléments des jours et des mois
 days_of_the_week = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-
-# variable année, à modifier si le planning ne concerne pas l'année en cours
-int_year = int(datetime.today().strftime('%Y'))
 
 # pour afficher les infos de débuggage
 verbose = 0
@@ -46,7 +43,21 @@ if len(sys.argv) > 1:
 		print("  -v                        show date value in ics format")
 		sys.exit()
 
-# converti le nom du jour en int (lundi=0, ...=6)
+# variable année, à modifier si le planning ne concerne pas l'année en cours
+int_year = int(datetime.today().strftime('%Y'))
+a = input("Changer l'année("+str(int_year)+") (o/N)")
+if (a == "o" or a == "O"):
+	str_year = input("Saisir l'année du planning : ")
+	try:
+		int_year = int(str_year)
+	except:
+		print("Erreur de saisie")
+		sys.exit()
+	
+else:
+	str_year = str(int_year)
+
+# converti le nom du jour en int (lundi=0, ...=6) lit que les 3 premieres lettres du jour
 def day_txt_to_int(arg_day_txt):
 	i = 0
 	for jours in days_of_the_week:
@@ -90,15 +101,13 @@ def calc_heure_ete_hiver(annee, mois, jour, heure, minute, seconde):
 	decal_heure_ete_hiver_gmt = -int(decal_heure_ete_hiver_gmt.seconds/3600)
 	return decal_heure_ete_hiver_gmt
 
-#renvoie le nom de l'intervenante
+#renvoie le nom de l'intervenant
 def find_name_inter(ligne_txt):
-	r=0
-	i = len(ligne_txt)-1
-	while i != 0:
-		if (ligne_txt[i].isdigit()):
-			r = i
-			return str(ligne_txt[r+2:r+30])
-		i -= 1
+	index_txt = len(ligne_txt)-2
+	while index_txt != 0:
+		if (ligne_txt[index_txt].isdigit()):
+			return str(ligne_txt[index_txt+2:index_txt+30])
+		index_txt -= 1
 	return False
 	
 # création d'un objet lecteur pdf
@@ -123,6 +132,9 @@ while x != -1:
 		text=text[x+1:-1]
 	index = index+1
 
+if debug:
+	print("Nb de ligne : "+str(index))
+	
 # ouverture du fichier d'enregistrement
 f = open(file_name_ics, "w")
 
@@ -183,7 +195,7 @@ for ligne in result_par_ligne:
 		# conversion du nom du mois en int
 		num_mois = month_txt_to_int(nom_mois)
 		if num_mois == False:
-			print("ERROR : parsing month "+nom_mois+" is not name of month")
+			print("ERREUR : parsing mois "+nom_mois+" n'est pas un nom de mois")
 			f.close()
 			sys.exit()
 		if debug:
@@ -245,7 +257,7 @@ for ligne in result_par_ligne:
 			
 		# détection d'erreur
 		if str_debut_minute.isdigit() == False or int(str_debut_minute)>59:
-			print("ERREUR : parsing minutes de début, line :"+ligne)
+			print("ERREUR : parsing minutes de début, ligne :"+ligne)
 			f.close()
 			sys.exit()
 			
@@ -273,23 +285,23 @@ for ligne in result_par_ligne:
 		
 		# détection d'erreur
 		if str_fin_minute.isdigit() == False or int(str_fin_minute)>59:
-			print("ERROR : parsing ending minute, line :"+ligne)
+			print("ERREUR : parsing minute de fin, ligne :"+ligne)
 			f.close()
 			sys.exit()
 		
 		# détection heure de fin < à heure de début
 		if (int_debut_heure*60+int(str_debut_minute) > int_fin_heure*60+int(str_fin_minute)):
-			print("ERROR : hour ending befor hour begin , line :"+ligne)
+			print("ERREUR : heure de fin inf à heure de début, ligne :"+ligne)
 			f.close()
 			sys.exit()
 		
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
-		str_data_dstart = year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00Z"
+		str_data_dstart = str_year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00Z"
 		if verbose or debug:
 			print("str_data_dstart :"+str_data_dstart)
 		
 		# concatenation des variables, mise au format ics/google de la date/heure de fin de l'évènement
-		str_data_end = year+str(num_mois)+str(num_jour)+"T"+str_fin_heure+str_fin_minute+"00Z"
+		str_data_end = str_year+str(num_mois)+str(num_jour)+"T"+str_fin_heure+str_fin_minute+"00Z"
 		if verbose or debug:
 			print("   str_data_end :"+str_data_end)
 		
@@ -305,7 +317,7 @@ for ligne in result_par_ligne:
 		if verbose or debug:
 			print("  str_nom_inter :"+str_nom_inter)
 
-		# écriture de l'évènement au format ics/google dans le fichier file_name_ics
+		# écriture de l'évènement au format ics dans le fichier file_name_ics
 		f.write("BEGIN:VEVENT\n")
 		f.write("DTSTART:"+str_data_dstart+"\n")
 		f.write("DTEND:"+str_data_end+"\n")
@@ -329,16 +341,18 @@ for ligne in result_par_ligne:
 		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
 	else:
-		if debug:
-			print("######### ERREUR LECTURE DE LIGNE #########");
-			print("ligne -> "+ligne);
-			#f.close()
-			#sys.exit()
+		print("######### ERREUR LECTURE DE LIGNE #########");
+		print("ligne -> "+ligne);
+		f.close()
+		sys.exit()
 if is_day_name(ligne):
+	if debug:
+		print("############### fin des boucles ###############")
 	# pied de page au format ics
 	f.write("END:VCALENDAR")
 	# fermeture du fichier enregistré
 	f.close()
+	print(str(len(result_par_ligne))+" interventions trouvées")
 	print("Fichier "+file_name_ics+" enregistré")
 	print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
 	# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
