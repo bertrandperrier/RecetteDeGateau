@@ -1,0 +1,61 @@
+Jeudi 01 Mai de 10h30 à 12h00 01h30 Rolande
+Jeudi 01 Mai de 19h00 à 19h30 00h30 Rolande
+Vendredi 02 Mai de 08h30 à 10h15 01h45 Tristan
+Samedi 03 Mai de 10h15 à 11h45 01h30 Tristan
+Dimanche 04 Mai de 10h15 à 11h45 01h30 Tristan
+Dimanche 04 Mai de 19h00 à 19h30 00h30 Tristan
+Lundi 05 Mai de 08h30 à 10h15 01h45 Mathilde
+Lundi 05 Mai de 12h00 à 12h30 00h30 Mathilde
+Lundi 05 Mai de 19h30 à 20h00 00h30 non renseigné
+Mardi 06 Mai de 08h30 à 10h15 01h45 non renseigné
+Mardi 06 Mai de 19h00 à 19h30 00h30 Tristan
+Mercredi 07 Mai de 08h45 à 10h30 01h45 non renseigné
+Mercredi 07 Mai de 12h00 à 12h30 00h30 Tristan
+Jeudi 08 Mai de 11h00 à 12h30 01h30 Tristan
+Jeudi 08 Mai de 19h00 à 19h30 00h30 Tristan
+Vendredi 09 Mai de 08h30 à 10h15 01h45 Tristan
+Samedi 10 Mai de 10h30 à 12h00 01h30 Rolande
+Dimanche 11 Mai de 10h15 à 11h45 01h30 Rolande
+Dimanche 11 Mai de 19h00 à 19h30 00h30 Rolande
+Lundi 12 Mai de 08h30 à 10h15 01h45 Céline
+Lundi 12 Mai de 12h15 à 12h45 00h30 Céline
+Lundi 12 Mai de 19h00 à 19h30 00h30 non renseigné
+Mardi 13 Mai de 08h30 à 10h15 01h45 Stéphanie
+Mardi 13 Mai de 12h00 à 12h30 00h30 Karine
+Mardi 13 Mai de 19h00 à 19h30 00h30 Tristan
+Mercredi 14 Mai de 08h45 à 10h30 01h45 Stéphanie
+Mercredi 14 Mai de 12h00 à 12h30 00h30 Tristan
+Jeudi 15 Mai de 08h30 à 10h15 01h45 Tristan
+Jeudi 15 Mai de 19h15 à 19h45 00h30 Stéphanie
+Vendredi 16 Mai de 08h30 à 10h15 01h45 Tristan
+Vendredi 16 Mai de 12h00 à 12h30 00h30 Tristan
+Samedi 17 Mai de 10h45 à 12h15 01h30 Tristan
+Dimanche 18 Mai de 10h45 à 12h15 01h30 Tristan
+Dimanche 18 Mai de 19h00 à 19h30 00h30 Tristan
+Lundi 19 Mai de 08h30 à 10h15 01h45 Karine
+Lundi 19 Mai de 11h30 à 12h00 00h30 Karine
+Lundi 19 Mai de 19h15 à 19h45 00h30 non renseigné
+Mardi 20 Mai de 08h30 à 10h15 01h45 Stéphanie
+Mardi 20 Mai de 12h00 à 12h30 00h30 Tristan
+Mardi 20 Mai de 19h00 à 19h30 00h30 Tristan
+Mercredi 21 Mai de 08h30 à 10h15 01h45 non renseigné
+Mercredi 21 Mai de 12h00 à 12h30 00h30 Tristan
+Jeudi 22 Mai de 08h30 à 10h15 01h45 Stéphanie
+Jeudi 22 Mai de 19h00 à 19h30 00h30 Stéphanie
+Vendredi 23 Mai de 08h15 à 10h00 01h45 Stéphanie
+Vendredi 23 Mai de 12h00 à 12h30 00h30 Stéphanie
+Samedi 24 Mai de 11h30 à 13h00 01h30 Julie
+Dimanche 25 Mai de 11h30 à 13h00 01h30 Julie
+Dimanche 25 Mai de 19h00 à 19h30 00h30 Julie
+Lundi 26 Mai de 08h30 à 10h15 01h45 Karine
+Lundi 26 Mai de 11h30 à 12h00 00h30 Karine
+Lundi 26 Mai de 19h00 à 19h30 00h30 non renseigné
+Mardi 27 Mai de 08h30 à 10h15 01h45 Stéphanie
+Mardi 27 Mai de 12h15 à 12h45 00h30 Stéphanie
+Lundi 26 Mai de 08h45 à 10h30 01h45 Stéphanie
+Mercredi 28 Mai de 12h15 à 12h45 00h30 non renseigné
+Jeudi 29 Mai de 11h30 à 13h00 01h30 Julie
+Jeudi 29 Mai de 19h00 à 19h30 00h30 Julie
+Vendredi 30 Mai de 08h30 à 10h15 01h45 non renseigné
+Vendredi 30 Mai de 12h00 à 12h30 00h30 non renseigné
+Samedi 31 Mai de 10h30 à 12h00 01h30 non renseigné

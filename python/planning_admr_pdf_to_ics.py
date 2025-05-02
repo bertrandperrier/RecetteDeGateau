@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 #
-# ce programme convertit un planning de l'ADMR du format pdf au format ics
-# to do : use .split(' ')
+# ce programme convertit un planning de l'ADMR du format pdf ou texte au format ics
 
 # importation des modules nécessaires 
 from PyPDF2 import PdfReader
@@ -22,6 +21,7 @@ reminder_delay_minute = "5"
 
 file_name_pdf = "planning_admr.pdf"
 file_name_ics = "planning_admr.ics"
+file_name_txt = "planning_admr.txt"
 
 # liste d'éléments des jours et des mois
 days_of_the_week = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
@@ -30,32 +30,8 @@ months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "J
 # pour afficher les infos de débuggage
 verbose = 0
 debug = 0
-if len(sys.argv) > 1:
-	if sys.argv[1] == "-debug":
-		debug = 1
-	if sys.argv[1] == "-v":
-		verbose = 2
-	if sys.argv[1] == "-h":
-		print("Utilisation :")
-		print(os.path.basename(__file__)+"  [OPTION...]\n")
-		print("Options de l'application :")
-		print("  -debug                    mode verbose")
-		print("  -v                        show date value in ics format")
-		sys.exit()
 
-# variable année, à modifier si le planning ne concerne pas l'année en cours
-int_year = int(datetime.today().strftime('%Y'))
-a = input("Changer l'année("+str(int_year)+") (o/N)")
-if (a == "o" or a == "O"):
-	str_year = input("Saisir l'année du planning : ")
-	try:
-		int_year = int(str_year)
-	except:
-		print("Erreur de saisie")
-		sys.exit()
-	
-else:
-	str_year = str(int_year)
+nb_interventions = 0
 
 # converti le nom du jour en int (lundi=0, ...=6) lit que les 3 premieres lettres du jour
 def day_txt_to_int(arg_day_txt):
@@ -76,7 +52,7 @@ def is_day_name(arg_day_txt):
 	arg_day_txt=arg_day_txt.lower()
 	is_day = False
 	for jour in days_of_the_week:
-		if arg_day_txt[0:5] == jour[0:5]:
+		if arg_day_txt[0:5] == jour[0:5]: #tester arg_day_txt[0:1]
 			is_day = True
 	return is_day
 
@@ -84,12 +60,12 @@ def is_day_name(arg_day_txt):
 def month_txt_to_int(arg_month_txt):
 	i = 1
 	for month in months_of_the_year:
-		if month[0:4].lower() == arg_month_txt[0:4].lower():
+		if month[0:4].lower() == arg_month_txt[0:4].lower(): # tester month[0:3]
 			if len(str(i)) == 2:
 				return i
 			else:
 				return "0"+str(i)
-		i=i+1
+		i+=1
 	return False
 
 # renvoi le décalage horaire avec GMT, -1 en hiver -2 en été
@@ -109,32 +85,102 @@ def find_name_inter(ligne_txt):
 			return str(ligne_txt[index_txt+2:index_txt+30])
 		index_txt -= 1
 	return False
+
+#renvoie un tab des lignes d'un fichier
+def file_to_tab(file_to_read):
+	file_txt = open(file_name_txt, "r")
+	lines_of_file_txt = file_txt.readlines()
+	# fermeture du fichier enregistré
+	file_txt.close()
+
+	tab_result = []
+	for lines in lines_of_file_txt:
+		if debug :
+			print("ligne du fichier texte : "+str(lines))
+		if (is_day_name(lines)):
+			lines = lines[:-1]
+			tab_result.insert(99,lines)
+	# on ajoute la première intervention
+	tab_result[0] = lines_of_file_txt[0][:-1]	
+	return tab_result
+
+# pour afficher les infos de débuggage
+if len(sys.argv) > 1:
+	if sys.argv[1] == "-debug" or sys.argv[1] == "-d":
+		debug = 1
+	if sys.argv[1] == "-v":
+		verbose = 2
+	if sys.argv[1] == "-h":
+		print("Utilisation :")
+		print(os.path.basename(__file__)+"  [OPTION...]\n")
+		print("Options de l'application :")
+		print("  -debug                    mode verbose")
+		print("  -v                        montre les dates aux format ics")
+		sys.exit()
+
+# variable année, à modifier si le planning ne concerne pas l'année en cours
+int_year = int(datetime.today().strftime('%Y'))
+a = input("Changer l'année("+str(int_year)+") (o/N)")
+if (a == "o" or a == "O"):
+	while(1):
+		str_year = input("Saisir l'année du planning : ")
+		try:
+			int_year = int(str_year)
+			if len(str_year)==4:
+				break
+			else:
+				print("Saisir l'année sur 4 chiffres")
+		except:
+			print("Erreur de saisie")
 	
-# création d'un objet lecteur pdf
-reader = PdfReader(file_name_pdf)
-
-# récupérer la première page du pdf (0=1ère page)
-page = reader.pages[0]
-
-# extraction du texte de la page
-text = page.extract_text()
-if debug:
-	print(text)
-result_par_ligne = []
-index = 0
-x=0
-
-# converti le texte du pdf en liste d'éléments (1 ligne par élément)
-while x != -1:
-	x=text.find("\n")
-	if x != -1:
-		result_par_ligne.insert(index, text[0:x]) 
-		text=text[x+1:-1]
-	index = index+1
-
-if debug:
-	print("Nb de ligne : "+str(index))
+else:
+	str_year = str(int_year)
 	
+while True:
+	source_planning = input("Source du planning (Pdf/Texte) : ")
+	if (source_planning=="pdf" or source_planning=="Pdf" or source_planning=="p" or source_planning=="P" or source_planning=="texte" or source_planning=="Texte" or source_planning=="t" or source_planning=="T"):
+		break
+
+if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "p" or source_planning == "P"):
+	print("lecture du fichier pdf")
+	# création d'un objet lecteur pdf
+	reader = PdfReader(file_name_pdf)
+	nb_de_page = len(reader.pages)
+	
+	#tableau de lignes du pdf
+	result_par_ligne = []
+	
+	for i in range(nb_de_page):
+		# récupérer la première page du pdf (0=1ère page)
+		page = reader.pages[0]
+
+		# extraction du texte de la page
+		text = page.extract_text()
+		if debug:
+			print(text)
+
+		index = 0
+		x=0
+
+		# converti le texte du pdf en liste d'éléments (1 ligne par élément)
+		while x != -1:
+			x=text.find("\n")
+			if x != -1:
+				result_par_ligne.insert(index, text[0:x]) 
+				text=text[x+1:-1]
+			index = index+1
+			
+		if debug:
+			print("Nb de ligne : "+str(index))
+else:
+	#pas de pdf, lecture du fichier "saisie manuelle"
+	print("lecture du fichier : "+file_name_txt)
+
+
+	result_par_ligne=file_to_tab(file_name_txt)
+
+
+
 # ouverture du fichier d'enregistrement
 f = open(file_name_ics, "w")
 
@@ -176,7 +222,7 @@ for ligne in result_par_ligne:
 	if is_day_name(ligne):
 		if debug:
 			print("ligne agenda :"+ligne)
-		#récupération du nom du jour de la semaine 
+		#récupération du nom du jour de la semaine
 		nom_jour_int = day_txt_to_int(ligne)
 		nom_jour_txt = days_of_the_week[nom_jour_int]
 		if debug:
@@ -257,12 +303,19 @@ for ligne in result_par_ligne:
 			
 		# détection d'erreur
 		if str_debut_minute.isdigit() == False or int(str_debut_minute)>59:
-			print("ERREUR : parsing minutes de début, ligne :"+ligne)
+			print("ERREUR : parsing minutes de début, ligne : "+ligne)
 			f.close()
 			sys.exit()
 			
 		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et mise à l'heure GMT
 		index_fin_heure=ligne.find("h",index_debut_heure+1)
+		
+		# détection d'erreur
+		if not ligne[index_fin_heure-2:index_fin_heure].isdigit():
+			print("ERREUR : parsing heure de fin. "+str_fin_heure+" n'est pas un entier, ligne : "+ligne)
+			f.close()
+			sys.exit()
+			
 		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])+decal_heure_ete_hiver_gmt
 		str_fin_heure = str(int_fin_heure)
 		
@@ -272,11 +325,6 @@ for ligne in result_par_ligne:
 		if debug:
 			print("heure fin :"+str_fin_heure)
 		
-		# détection d'erreur
-		if str_fin_heure.isdigit() == False or int(str_fin_heure)>24:
-			print("ERREUR : parsing heure de fin. "+str_fin_heure+" n'est pas un entier ou est supérieur à 24, ligne :"+ligne)
-			f.close()
-			sys.exit()
 		
 		# extraction des minutes de fin d'intervention en fct de la longueur de chaine
 		str_fin_minute = ligne[index_fin_heure+1:index_fin_heure+3]
@@ -335,24 +383,20 @@ for ligne in result_par_ligne:
 		f.write("TRANSP:OPAQUE\n")
 		f.write("BEGIN:VALARM\n")
 		f.write("ACTION:DISPLAY\n")
-		f.write("DESCRIPTION:This is an event reminder\n")
+		f.write("DESCRIPTION:Intervention de l'ADMR\n")
 		# rappel de l'évènement 5 min avant
 		f.write("TRIGGER:-P0DT"+reminder_delay_hour+"H"+reminder_delay_minute+"M0S\n")
 		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
-	else:
-		print("######### ERREUR LECTURE DE LIGNE #########");
-		print("ligne -> "+ligne);
-		f.close()
-		sys.exit()
-if is_day_name(ligne):
-	if debug:
-		print("############### fin des boucles ###############")
-	# pied de page au format ics
-	f.write("END:VCALENDAR")
-	# fermeture du fichier enregistré
-	f.close()
-	print(str(len(result_par_ligne))+" interventions trouvées")
-	print("Fichier "+file_name_ics+" enregistré")
-	print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
-	# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
+		nb_interventions += 1
+
+if debug:
+	print("############### fin des boucles ###############")
+# pied de page au format ics
+f.write("END:VCALENDAR")
+# fermeture du fichier enregistré
+f.close()
+print(str(nb_interventions)+" interventions trouvées")
+print("Fichier "+file_name_ics+" enregistré")
+print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
+# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
