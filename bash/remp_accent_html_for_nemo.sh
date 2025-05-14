@@ -7,10 +7,6 @@
 # Ce script permet de remplacer les caractère accentué par le codage html
 # par exemple é devient eacute;
 
-# Ce scripts est à mettre pour :
-#    - Caja (Mate) dans ~/.config/caja/scripts
-#    - Nautilus (Gnome/Unity) dans ~/.local/share/nautilus/scripts/ $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
-#    - Némo (Cinnamon) dans ~/.local/share/nemo/scripts/ $NEMO_SCRIPT_SELECTED_FILE_PATHS
 
 zenity --info --text=$NEMO_SCRIPT_SELECTED_FILE_PATHS
 zenity --info --text="Veuillez attendre l'avertissement de fin du traitement du fichier\n valider pour commencer le traitement" --title="remp_accent_html.sh"
@@ -142,7 +138,8 @@ sed -e "s/§/\&para;/g" $NEMO_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
 mv -f /tmp/fichier.tmp $NEMO_SCRIPT_SELECTED_FILE_PATHS
 sed -e "s/©/\&copy;/g" $NEMO_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
 mv -f /tmp/fichier.tmp $NEMO_SCRIPT_SELECTED_FILE_PATHS
-
+sed -e "s/€/\&euro;/g" $NEMO_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
+mv -f /tmp/fichier.tmp $NEMO_SCRIPT_SELECTED_FILE_PATHS
 
 zenity --info --text="Le fichier à été modifié et enregistré avec succés" --title="remp_accent_html.sh"
 

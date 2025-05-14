@@ -4,13 +4,9 @@
 ## ajout oe collé le 25/08/23
 ## ajout de 50 caractères le 07/01/25
 
-# Ce script permet de remplacé les caractère accentué par le codage html
+# Ce script permet de remplacer les caractère accentué par le codage html
 # par exemple é devient eacute;
 
-# Ce scripts est à mettre pour :
-#    - Caja (Mate) dans ~/.config/caja/scripts
-#    - Nautilus (Gnome/Unity) dans ~/.local/share/nautilus/scripts/ $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
-#    - Némo (Cinnamon) dans ~/.local/share/nemo/scripts/ $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 
 zenity --info --text=$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 zenity --info --text="Veuillez attendre l'avertissement de fin du traitement du fichier\n valider pour commencer le traitement" --title="remp_accent_html.sh"
@@ -141,6 +137,8 @@ mv -f /tmp/fichier.tmp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 sed -e "s/§/\&para;/g" $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
 mv -f /tmp/fichier.tmp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 sed -e "s/©/\&copy;/g" $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
+mv -f /tmp/fichier.tmp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
+sed -e "s/€/\&euro;/g" $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS > /tmp/fichier.tmp
 mv -f /tmp/fichier.tmp $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
 
 zenity --info --text="Le fichier à été modifié et enregistré avec succés" --title="remp_accent_html.sh"
