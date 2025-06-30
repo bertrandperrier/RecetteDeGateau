@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# ce programme convertit un planning de l'ADMR du format pdf ou texte au format ics
+# ce programme convertit un planning de l'ADMR du format pdf au format ics
 
 # importation des modules nécessaires 
 from PyPDF2 import PdfReader
@@ -50,11 +50,14 @@ def day_txt_to_int(arg_day_txt):
 # vérifie si l'argument est le nom d'un jour de la semaine
 def is_day_name(arg_day_txt):
 	arg_day_txt=arg_day_txt.lower()
-	is_day = False
-	for jour in days_of_the_week:
-		if arg_day_txt[0:5] == jour[0:5]: #tester arg_day_txt[0:1]
-			is_day = True
-	return is_day
+	if debug:
+		print("len : "+str(len(arg_day_txt)))
+	for i in range(len(arg_day_txt)):
+		for jour in days_of_the_week:
+			if arg_day_txt[i:i+5] == jour[0:5]:
+				arg_day_txt=arg_day_txt[i:]
+				return arg_day_txt
+	return False
 
 # converti le nom d'un mois en int (Janvier=1, ...)
 def month_txt_to_int(arg_month_txt):
@@ -100,6 +103,9 @@ def file_to_tab(file_to_read):
 		if (is_day_name(lines)):
 			lines = lines[:-1]
 			tab_result.insert(99,lines)
+		else:
+			if verbose or debug: # :-1 pour enlever le \n
+				print("########### impossible d'extraire les informations sur la ligne : "+lines[:-1]+" ###########")
 	# on ajoute la première intervention
 	tab_result[0] = lines_of_file_txt[0][:-1]	
 	return tab_result
@@ -114,8 +120,8 @@ if len(sys.argv) > 1:
 		print("Utilisation :")
 		print(os.path.basename(__file__)+"  [OPTION...]\n")
 		print("Options de l'application :")
-		print("  -debug                    mode verbose")
-		print("  -v                        montre les dates aux format ics")
+		print("  -debug -d                 affiche tout")
+		print("  -v                        mode verbose, montre les dates aux format ics")
 		sys.exit()
 
 # variable année, à modifier si le planning ne concerne pas l'année en cours
@@ -152,12 +158,14 @@ if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "
 	
 	for i in range(nb_de_page):
 		# récupérer la première page du pdf (0=1ère page)
-		page = reader.pages[0]
+		if debug:
+			print("page : "+str(i))
+		page = reader.pages[i]
 
 		# extraction du texte de la page
 		text = page.extract_text()
 		if debug:
-			print(text)
+			print("texte de la page "+str(i)+" : "+text)
 
 		index = 0
 		x=0
@@ -166,17 +174,22 @@ if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "
 		while x != -1:
 			x=text.find("\n")
 			if x != -1:
-				result_par_ligne.insert(index, text[0:x]) 
+				result_par_ligne.insert(index, text[0:x])
+				if debug:
+					print("TEXTE DU PDF. Page "+str(i)+" : "+text[0:x])
+				
+				# on retire le texte traité
 				text=text[x+1:-1]
 			index = index+1
-			
+		
+		
 		if debug:
-			print("Nb de ligne : "+str(index))
+			print("Nb de ligne : "+str(index-1))
 else:
 	#pas de pdf, lecture du fichier "saisie manuelle"
-	print("lecture du fichier : "+file_name_txt)
+	print("###############lecture du fichier : "+file_name_txt+" ###############")
 
-
+	
 	result_par_ligne=file_to_tab(file_name_txt)
 
 
@@ -213,15 +226,19 @@ f.write("RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\n")
 f.write("END:STANDARD\n")
 f.write("END:VTIMEZONE\n")
 
+if debug:
+	print("nb de boucle : "+str(len(result_par_ligne)))
+
 # extraction des données pour chaque élément du array
 for ligne in result_par_ligne:
 	if debug:
 		print("############### nouvelle boucle ###############")
 		print("is_day_name :"+str(is_day_name(ligne)))
 	# si la ligne commence par le nom d'un jour de semaine
-	if is_day_name(ligne):
+	if is_day_name(ligne):  # déjà vérifié
 		if debug:
 			print("ligne agenda :"+ligne)
+		ligne = is_day_name(ligne)
 		#récupération du nom du jour de la semaine
 		nom_jour_int = day_txt_to_int(ligne)
 		nom_jour_txt = days_of_the_week[nom_jour_int]
