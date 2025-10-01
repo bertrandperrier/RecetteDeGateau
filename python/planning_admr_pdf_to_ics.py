@@ -24,7 +24,7 @@ file_name_ics = "planning_admr.ics"
 file_name_txt = "planning_admr.txt"
 
 # liste d'éléments des jours et des mois
-days_of_the_week = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+days_of_the_week = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche","Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
 # pour afficher les infos de débuggage
@@ -49,7 +49,6 @@ def day_txt_to_int(arg_day_txt):
 
 # vérifie si l'argument est le nom d'un jour de la semaine
 def is_day_name(arg_day_txt):
-	arg_day_txt=arg_day_txt.lower()
 	if debug:
 		print("len : "+str(len(arg_day_txt)))
 	for i in range(len(arg_day_txt)):
@@ -101,6 +100,8 @@ def file_to_tab(file_to_read):
 		if debug :
 			print("ligne du fichier texte : "+str(lines))
 		if (is_day_name(lines)):
+			if debug :
+				print("nom du jour détecté")
 			lines = lines[:-1]
 			tab_result.insert(99,lines)
 		else:
@@ -187,7 +188,7 @@ if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "
 			print("Nb de ligne : "+str(index-1))
 else:
 	#pas de pdf, lecture du fichier "saisie manuelle"
-	print("###############lecture du fichier : "+file_name_txt+" ###############")
+	print("Lecture du fichier : "+file_name_txt)
 
 	
 	result_par_ligne=file_to_tab(file_name_txt)
@@ -209,17 +210,48 @@ f.write("BEGIN:VTIMEZONE\n")
 f.write("TZID:Europe/Paris\n")
 f.write("X-LIC-LOCATION:Europe/Paris\n")
 f.write("BEGIN:DAYLIGHT\n")
-#TZOFFSETFROM est le décalage heure d'été est en fonctionnement
-f.write("TZOFFSETFROM:+0200\n")
-#TZOFFSETTO est le décalage heure standard est en fonctionnement.
-f.write("TZOFFSETTO:+0100\n")
+
+## reflechir sur TZOFFSET est à définir à chaque event
+
+
+for ligne in result_par_ligne:
+	if is_day_name(ligne):
+		nom_jour_int = day_txt_to_int(ligne)
+		nom_jour_txt = days_of_the_week[nom_jour_int]
+		len_jour = len(nom_jour_txt)
+		nom_mois = ligne[len_jour+4:len_jour+8]
+		num_mois = month_txt_to_int(nom_mois)
+		num_jour = ligne[len_jour+1:len_jour+3]
+		if debug:
+			print("y="+str(int_year)+" mois="+str(num_mois)+" jour="+str(num_jour))
+		break
+
+if (calc_heure_ete_hiver(int_year, int(num_mois), int(num_jour), 12, 0, 0) == -1):
+	#heure d'hiver
+	if debug:
+		print("heure d'hiver###############")
+	f.write("TZOFFSETFROM:+0200\n")
+	f.write("TZOFFSETTO:+0100\n")
+else:
+	#heure d'été
+	if debug:
+		print("heure d'été###########")
+	f.write("TZOFFSETFROM:+0100\n")
+	f.write("TZOFFSETTO:+0200\n")
+
 f.write("TZNAME:CEST\n")
 f.write("DTSTART:19700329T020000\n")
 f.write("RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU\n")
 f.write("END:DAYLIGHT\n")
 f.write("BEGIN:STANDARD\n")
-f.write("TZOFFSETFROM:+0200\n")
-f.write("TZOFFSETTO:+0100\n")
+if (calc_heure_ete_hiver(int_year, int(num_mois), int(num_jour), 12, 0, 0) == -1):
+	#heure d'hiver
+	f.write("TZOFFSETFROM:+0200\n")
+	f.write("TZOFFSETTO:+0100\n")
+else:
+	#heure d'été
+	f.write("TZOFFSETFROM:+0100\n")
+	f.write("TZOFFSETTO:+0200\n")
 f.write("TZNAME:CET\n")
 f.write("DTSTART:19701025T030000\n")
 f.write("RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\n")
@@ -227,17 +259,19 @@ f.write("END:STANDARD\n")
 f.write("END:VTIMEZONE\n")
 
 if debug:
-	print("nb de boucle : "+str(len(result_par_ligne)))
+	print("nb de ligne : "+str(len(result_par_ligne)))
 
 # extraction des données pour chaque élément du array
 for ligne in result_par_ligne:
 	if debug:
 		print("############### nouvelle boucle ###############")
-		print("is_day_name :"+str(is_day_name(ligne)))
+		if debug:
+			print("ligne agenda : "+ligne)
+		print("is_day_name : "+str(is_day_name(ligne)))
 	# si la ligne commence par le nom d'un jour de semaine
 	if is_day_name(ligne):  # déjà vérifié
 		if debug:
-			print("ligne agenda :"+ligne)
+			print("is_day_name")
 		ligne = is_day_name(ligne)
 		#récupération du nom du jour de la semaine
 		nom_jour_int = day_txt_to_int(ligne)
@@ -258,7 +292,7 @@ for ligne in result_par_ligne:
 		# conversion du nom du mois en int
 		num_mois = month_txt_to_int(nom_mois)
 		if num_mois == False:
-			print("ERREUR : parsing mois "+nom_mois+" n'est pas un nom de mois")
+			print("ERREUR : parsing mois "+nom_mois+" n'est pas un nom de mois. "+ligne)
 			f.close()
 			sys.exit()
 		if debug:
@@ -279,12 +313,7 @@ for ligne in result_par_ligne:
 		if not num_jour.isdigit():
 			print("ERREUR : parsing numéro du jour "+num_jour+" n'est pas un numéro")
 			f.close()
-			sys.exit()
-		
-		# calcul décalage entre l'heure du pdf et gmt (-1 en hiver, -2 en été)
-		decal_heure_ete_hiver_gmt = calc_heure_ete_hiver(int_year, int(num_mois), int(num_jour), 12, 0, 0)
-		if debug:
-			print("decal_heure_ete_hiver_gmt :"+str(decal_heure_ete_hiver_gmt))
+			sys.exit()			
 		
 		# extraction de l'heure du début d'intervention en fct de la longueur de chaine et calcul en fct de l'heure d'été/hiver
 		index_debut_heure=ligne.find("h",len_jour_et_mois)
@@ -304,7 +333,7 @@ for ligne in result_par_ligne:
 			sys.exit()	
 				
 		# mise à l'heure GMT
-		int_debut_heure = int(str_debut_heure)+decal_heure_ete_hiver_gmt
+		int_debut_heure = int(str_debut_heure)
 		str_debut_heure = str(int_debut_heure)
 		
 		#mise au format de l'heure (2char)
@@ -312,7 +341,7 @@ for ligne in result_par_ligne:
 			str_debut_heure = "0"+str_debut_heure
 		if debug:
 			print("heure debut :"+str_debut_heure)
-
+			
 		# extraction des minutes du début d'intervention en fct de la longueur de chaine
 		str_debut_minute = ligne[index_debut_heure+1:index_debut_heure+3]
 		if debug:
@@ -333,7 +362,7 @@ for ligne in result_par_ligne:
 			f.close()
 			sys.exit()
 			
-		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])+decal_heure_ete_hiver_gmt
+		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])
 		str_fin_heure = str(int_fin_heure)
 		
 		#mise au format de l'heure (2char)
@@ -341,8 +370,7 @@ for ligne in result_par_ligne:
 			str_fin_heure = "0"+str_fin_heure
 		if debug:
 			print("heure fin :"+str_fin_heure)
-		
-		
+				
 		# extraction des minutes de fin d'intervention en fct de la longueur de chaine
 		str_fin_minute = ligne[index_fin_heure+1:index_fin_heure+3]
 		if debug:
@@ -359,19 +387,21 @@ for ligne in result_par_ligne:
 			print("ERREUR : heure de fin inf à heure de début, ligne :"+ligne)
 			f.close()
 			sys.exit()
-		
+
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
-		str_data_dstart = str_year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00Z"
+		str_data_dstart = str_year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00"
 		if verbose or debug:
 			print("str_data_dstart :"+str_data_dstart)
 		
 		# concatenation des variables, mise au format ics/google de la date/heure de fin de l'évènement
-		str_data_end = str_year+str(num_mois)+str(num_jour)+"T"+str_fin_heure+str_fin_minute+"00Z"
+		str_data_end = str_year+str(num_mois)+str(num_jour)+"T"+str_fin_heure+str_fin_minute+"00"
 		if verbose or debug:
 			print("   str_data_end :"+str_data_end)
 		
+			
 		# extraction du nom de l'intervenante en fct de la longueur de chaine
 		str_nom_inter = find_name_inter(ligne)
+
 		
 		# détection d'erreur
 		if (str_nom_inter == False):
@@ -383,9 +413,9 @@ for ligne in result_par_ligne:
 			print("  str_nom_inter :"+str_nom_inter)
 
 		# écriture de l'évènement au format ics dans le fichier file_name_ics
-		f.write("BEGIN:VEVENT\n")
-		f.write("DTSTART:"+str_data_dstart+"\n")
-		f.write("DTEND:"+str_data_end+"\n")
+		f.write("BEGIN:VEVENT\n")			
+		f.write("DTSTART;TZID=Europe/Paris:"+str_data_dstart+"\n")
+		f.write("DTEND;TZID=Europe/Paris:"+str_data_end+"\n")
 		# variable aujourd'hui
 		aujourdhui = datetime.today().strftime('%Y%m%dT%H%M%SZ')
 		f.write("DTSTAMP:"+aujourdhui+"\n")
@@ -415,5 +445,5 @@ f.write("END:VCALENDAR")
 f.close()
 print(str(nb_interventions)+" interventions trouvées")
 print("Fichier "+file_name_ics+" enregistré")
-print("https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
+print("Importez "+file_name_ics+" sur https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
 # webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
