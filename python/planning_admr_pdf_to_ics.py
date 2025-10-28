@@ -11,13 +11,16 @@ import pytz.reference
 import os.path
 
 # email de l'agenda
-email_for_ics = 'xxxxxxx@xxxxxx.xxx'
+email_for_ics = 'karinebertrandcheppa@gmail.com'
 
 # notification nombre d'heure avant evenement
-reminder_delay_hour = "0"
+REMINDER_DELAY_HOUR = "0"
 
 # notification nombre de minutes avant evenement
-reminder_delay_minute = "5"
+REMINDER_DELAY_MINUTE = "5"
+
+# temps d'intervention maximum avant erreur
+TPS_INTER_MAX_HOURS = 3
 
 file_name_pdf = "planning_admr.pdf"
 file_name_ics = "planning_admr.ics"
@@ -332,9 +335,8 @@ for ligne in result_par_ligne:
 			f.close()
 			sys.exit()	
 				
-		# mise à l'heure GMT
-		int_debut_heure = int(str_debut_heure)
-		str_debut_heure = str(int_debut_heure)
+
+		
 		
 		#mise au format de l'heure (2char)
 		if len(str_debut_heure) == 1:
@@ -346,9 +348,11 @@ for ligne in result_par_ligne:
 		str_debut_minute = ligne[index_debut_heure+1:index_debut_heure+3]
 		if debug:
 			print("minute debut :"+str_debut_minute)
+		
+		int_debut_minute=int(str_debut_minute)
 			
 		# détection d'erreur
-		if str_debut_minute.isdigit() == False or int(str_debut_minute)>59:
+		if str_debut_minute.isdigit() == False or int_debut_minute>59:
 			print("ERREUR : parsing minutes de début, ligne : "+ligne)
 			f.close()
 			sys.exit()
@@ -356,15 +360,17 @@ for ligne in result_par_ligne:
 		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et mise à l'heure GMT
 		index_fin_heure=ligne.find("h",index_debut_heure+1)
 		
+		
+		int_debut_heure = int(str_debut_heure)
+		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])
+		str_fin_heure = str(int_fin_heure)
+		
 		# détection d'erreur
 		if not ligne[index_fin_heure-2:index_fin_heure].isdigit():
 			print("ERREUR : parsing heure de fin. "+str_fin_heure+" n'est pas un entier, ligne : "+ligne)
 			f.close()
 			sys.exit()
 			
-		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])
-		str_fin_heure = str(int_fin_heure)
-		
 		#mise au format de l'heure (2char)
 		if len(str_fin_heure) == 1:
 			str_fin_heure = "0"+str_fin_heure
@@ -376,17 +382,34 @@ for ligne in result_par_ligne:
 		if debug:
 			print("minute fin :"+str_fin_minute)
 		
+		int_fin_minute = int(str_fin_minute)
+		
 		# détection d'erreur
-		if str_fin_minute.isdigit() == False or int(str_fin_minute)>59:
+		if str_fin_minute.isdigit() == False or int_fin_minute>59:
 			print("ERREUR : parsing minute de fin, ligne :"+ligne)
 			f.close()
 			sys.exit()
 		
 		# détection heure de fin < à heure de début
-		if (int_debut_heure*60+int(str_debut_minute) > int_fin_heure*60+int(str_fin_minute)):
+		if (int_debut_heure*60+int_debut_minute > int_fin_heure*60+int_fin_minute):
 			print("ERREUR : heure de fin inf à heure de début, ligne :"+ligne)
 			f.close()
 			sys.exit()
+
+		#avertissement si intervention sup à alerte			
+		if ((int_fin_heure*60+int_fin_minute)-(int_debut_heure*60+int_debut_minute)>TPS_INTER_MAX_HOURS*60):
+			print("ERREUR : temps d'intervention sup à "+str(TPS_INTER_MAX_HOURS)+" heures\nLIGNE : "+ligne)
+			if debug:
+				print("debut_heure : "+str(int_debut_heure))
+				print("debut_minute : "+str(int_debut_minute))
+				print("fin_heure : "+str(int_fin_heure))
+				print("fin_minute : "+str(int_fin_minute))
+			f.close()
+			sys.exit()
+
+
+
+
 
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
 		str_data_dstart = str_year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00"
@@ -432,7 +455,7 @@ for ligne in result_par_ligne:
 		f.write("ACTION:DISPLAY\n")
 		f.write("DESCRIPTION:Intervention de l'ADMR\n")
 		# rappel de l'évènement 5 min avant
-		f.write("TRIGGER:-P0DT"+reminder_delay_hour+"H"+reminder_delay_minute+"M0S\n")
+		f.write("TRIGGER:-P0DT"+REMINDER_DELAY_HOUR+"H"+REMINDER_DELAY_MINUTE+"M0S\n")
 		f.write("END:VALARM\n")
 		f.write("END:VEVENT\n")
 		nb_interventions += 1
