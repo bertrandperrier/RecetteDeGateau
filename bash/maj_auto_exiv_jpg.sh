@@ -12,6 +12,7 @@ else
 	echo "argument"
 	$NEMO_SCRIPT_SELECTED_FILE_PATHS = $1
 fi
+
 for selected_uri in $NEMO_SCRIPT_SELECTED_FILE_PATHS; do
 	echo "fichier en cours : " $selected_uri
 	if ! [ $(mimetype -b "$selected_uri") = "image/jpeg" ]

@@ -11,7 +11,7 @@ import pytz.reference
 import os.path
 
 # email de l'agenda
-email_for_ics = 'karinebertrandcheppa@gmail.com'
+email_for_ics = 'xxxxxxxxxxxx@gmail.com'
 
 # notification nombre d'heure avant evenement
 REMINDER_DELAY_HOUR = "0"
@@ -56,7 +56,7 @@ def is_day_name(arg_day_txt):
 		print("len : "+str(len(arg_day_txt)))
 	for i in range(len(arg_day_txt)):
 		for jour in days_of_the_week:
-			if arg_day_txt[i:i+5] == jour[0:5]:
+			if arg_day_txt[i:i+3] == jour[0:3]:
 				arg_day_txt=arg_day_txt[i:]
 				return arg_day_txt
 	return False
@@ -110,6 +110,8 @@ def file_to_tab(file_to_read):
 		else:
 			if verbose or debug: # :-1 pour enlever le \n
 				print("########### impossible d'extraire les informations sur la ligne : "+lines[:-1]+" ###########")
+				if debug:
+					sys.exit()
 	# on ajoute la première intervention
 	tab_result[0] = lines_of_file_txt[0][:-1]	
 	return tab_result
@@ -334,9 +336,6 @@ for ligne in result_par_ligne:
 			print("ERREUR : parsing heure de début. "+str_debut_heure+" n'est pas un entier ou est supérieur à 24, ligne :"+ligne)
 			f.close()
 			sys.exit()	
-				
-
-		
 		
 		#mise au format de l'heure (2char)
 		if len(str_debut_heure) == 1:

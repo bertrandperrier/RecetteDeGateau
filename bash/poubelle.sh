@@ -1,4 +1,5 @@
 #!/bin/bash
+# à copier dans /usr/local/bin/
 if [ $USER != "root" ]
 then
 	if [ -e $1 ]
