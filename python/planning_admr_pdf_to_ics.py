@@ -22,14 +22,13 @@ REMINDER_DELAY_MINUTE = "5"
 # temps d'intervention maximum avant erreur
 TPS_INTER_MAX_HOURS = 3
 
-file_name_pdf = "planning_admr.pdf"
+file_name_pdf = "planning_admr5.pdf"
 file_name_ics = "planning_admr.ics"
 file_name_txt = "planning_admr.txt"
 
 # liste d'éléments des jours et des mois
 days_of_the_week = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche","Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-
+months_of_the_year = ["Janvier", "Février", "Mars", "Avril", "Mai ", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre", "Fevrier", "Aout", "Decembre"]
 # pour afficher les infos de débuggage
 verbose = 0
 debug = 0
@@ -53,13 +52,27 @@ def day_txt_to_int(arg_day_txt):
 # vérifie si l'argument est le nom d'un jour de la semaine
 def is_day_name(arg_day_txt):
 	if debug:
-		print("len : "+str(len(arg_day_txt)))
-	for i in range(len(arg_day_txt)):
+		print("is_day_name(). len : "+str(len(arg_day_txt)))
+		
+	#limitiation au 15 premier caratères
+	if len(arg_day_txt)>15:
+		len_arg = 15
+	else:
+		len_arg = len(arg_day_txt)
+	
+	for i in range(len_arg):
 		for jour in days_of_the_week:
 			if arg_day_txt[i:i+3] == jour[0:3]:
 				arg_day_txt=arg_day_txt[i:]
 				return arg_day_txt
 	return False
+
+def where_is_day_name(arg_day_txt):
+	for jour in days_of_the_week:
+		for i in range(len(arg_day_txt)):
+			if arg_day_txt[i:i+len(jour)] == jour:
+				return i
+	return -1
 
 # converti le nom d'un mois en int (Janvier=1, ...)
 def month_txt_to_int(arg_month_txt):
@@ -160,43 +173,66 @@ if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "
 	nb_de_page = len(reader.pages)
 	
 	#tableau de lignes du pdf
-	result_par_ligne = []
+	tab_result_par_ligne = []
 	
-	for i in range(nb_de_page):
+	for num_de_page in range(nb_de_page):
 		# récupérer la première page du pdf (0=1ère page)
 		if debug:
-			print("page : "+str(i))
-		page = reader.pages[i]
+			print("page : "+str(num_de_page))
+		page = reader.pages[num_de_page]
 
 		# extraction du texte de la page
 		text = page.extract_text()
 		if debug:
-			print("texte de la page "+str(i)+" : "+text)
+			print("\ntexte de la page "+str(num_de_page)+" : "+text+"\n")
 
 		index = 0
 		x=0
-
+		
 		# converti le texte du pdf en liste d'éléments (1 ligne par élément)
 		while x != -1:
 			x=text.find("\n")
 			if x != -1:
-				result_par_ligne.insert(index, text[0:x])
+				tab_result_par_ligne.insert(index, text[0:x])
 				if debug:
-					print("TEXTE DU PDF. Page "+str(i)+" : "+text[0:x])
+					print("TEXTE PDF en tableau. Page "+str(num_de_page)+" : "+text[0:x])
 				
 				# on retire le texte traité
-				text=text[x+1:-1]
+				text=text[x+1:]
+			else:
+				#extraire la dernier ligne qui n'a pas de \n puis break
+				tab_result_par_ligne.insert(index, text)
+				if debug:
+					print("TEXTE PDF en tableau. Page "+str(num_de_page)+" : "+text)
+				break;
 			index = index+1
-		
-		
+				
 		if debug:
 			print("Nb de ligne : "+str(index-1))
 else:
 	#pas de pdf, lecture du fichier "saisie manuelle"
 	print("Lecture du fichier : "+file_name_txt)
 
-	
-	result_par_ligne=file_to_tab(file_name_txt)
+	tab_result_par_ligne=file_to_tab(file_name_txt)
+
+if debug:
+	print("tab_result_par_ligne : ");
+	print(tab_result_par_ligne);
+
+
+if debug:
+	print("Nb de ligne : "+str(len(tab_result_par_ligne)));
+
+# on enleve ce qu'il y a avant le nom du jour
+for ligne in tab_result_par_ligne:
+	if debug:
+		print(where_is_day_name(ligne))
+		print("ligne jour1 : "+ligne);
+	if where_is_day_name(ligne) != -1:
+		#retrait de ce qu'il y a avant le nom du jour
+		ligne=ligne[where_is_day_name(ligne):]
+		if debug:
+			print("ligne jour2 : "+ligne);
 
 
 
@@ -219,7 +255,10 @@ f.write("BEGIN:DAYLIGHT\n")
 ## reflechir sur TZOFFSET est à définir à chaque event
 
 
-for ligne in result_par_ligne:
+for ligne in tab_result_par_ligne:
+	if debug:
+		print("traitement de la ligne : "+ligne)
+		print("is_day_name(ligne) : "+str(is_day_name(ligne)))
 	if is_day_name(ligne):
 		nom_jour_int = day_txt_to_int(ligne)
 		nom_jour_txt = days_of_the_week[nom_jour_int]
@@ -264,15 +303,20 @@ f.write("END:STANDARD\n")
 f.write("END:VTIMEZONE\n")
 
 if debug:
-	print("nb de ligne : "+str(len(result_par_ligne)))
+	print("nb de ligne : "+str(len(tab_result_par_ligne)))
 
 # extraction des données pour chaque élément du array
-for ligne in result_par_ligne:
+for ligne in tab_result_par_ligne:
 	if debug:
 		print("############### nouvelle boucle ###############")
 		if debug:
 			print("ligne agenda : "+ligne)
 		print("is_day_name : "+str(is_day_name(ligne)))
+	#enlever ce qu'il y a avant le nom du jour
+	where_is_day_name
+	
+	
+	
 	# si la ligne commence par le nom d'un jour de semaine
 	if is_day_name(ligne):  # déjà vérifié
 		if debug:
@@ -359,6 +403,10 @@ for ligne in result_par_ligne:
 		# extraction de l'heure de fin d'intervention en fct de la longueur de chaine et mise à l'heure GMT
 		index_fin_heure=ligne.find("h",index_debut_heure+1)
 		
+		if index_fin_heure == -1:
+			print("ERREUR \"h\" non trouvé. Ligne : "+ligne);
+			f.close()
+			sys.exit()
 		
 		int_debut_heure = int(str_debut_heure)
 		int_fin_heure = int(ligne[index_fin_heure-2:index_fin_heure])
