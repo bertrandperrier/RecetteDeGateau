@@ -9,6 +9,7 @@ from datetime import datetime
 import webbrowser
 import pytz.reference
 import os.path
+import inquirer
 
 # email de l'agenda
 email_for_ics = 'xxxxxxxxxxxx@gmail.com'
@@ -22,7 +23,6 @@ REMINDER_DELAY_MINUTE = "5"
 # temps d'intervention maximum avant erreur
 TPS_INTER_MAX_HOURS = 3
 
-file_name_pdf = "planning_admr5.pdf"
 file_name_ics = "planning_admr.ics"
 file_name_txt = "planning_admr.txt"
 
@@ -167,6 +167,16 @@ while True:
 		break
 
 if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "p" or source_planning == "P"):
+	# choix du fichier pdf
+	fichiers = [f for f in os.listdir('.') if f.endswith('.pdf')]
+	question = [
+	    inquirer.List('pdf',
+		          message="Choisir un planning pdf",
+		          choices=fichiers)
+	]
+	reponse = inquirer.prompt(question)
+	file_name_pdf = reponse['pdf']
+
 	print("lecture du fichier pdf")
 	# création d'un objet lecteur pdf
 	reader = PdfReader(file_name_pdf)
@@ -211,6 +221,18 @@ if (source_planning == "pdf" or source_planning == "Pdf" or source_planning == "
 			print("Nb de ligne : "+str(index-1))
 else:
 	#pas de pdf, lecture du fichier "saisie manuelle"
+	
+	
+	# choix du fichier txt
+	fichiers = [f for f in os.listdir('.') if f.endswith('.txt')]
+	question = [
+	    inquirer.List('txt',
+		          message="Choisir un planning txt",
+		          choices=fichiers)
+	]
+	reponse = inquirer.prompt(question)
+	file_name_txt = reponse['txt']
+	
 	print("Lecture du fichier : "+file_name_txt)
 
 	tab_result_par_ligne=file_to_tab(file_name_txt)
@@ -454,10 +476,6 @@ for ligne in tab_result_par_ligne:
 			f.close()
 			sys.exit()
 
-
-
-
-
 		# concatenation des variables, mise au format ics/google de la date/heure de début de l'évènement
 		str_data_dstart = str_year+str(num_mois)+str(num_jour)+"T"+str_debut_heure+str_debut_minute+"00"
 		if verbose or debug:
@@ -516,4 +534,4 @@ f.close()
 print(str(nb_interventions)+" interventions trouvées")
 print("Fichier "+file_name_ics+" enregistré")
 print("Importez "+file_name_ics+" sur https://calendar.google.com/calendar/u/1/r/settings/export?pli=1")
-# webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
+webbrowser.open('https://calendar.google.com/calendar/u/1/r/settings/export?pli=1')
