@@ -16,7 +16,24 @@ then
 			echo "# début de la sauvegarde #"
 			echo "#####   site web    ######"
 			echo "##########################"
-			rsync -a --delete --exclude=".*/" --exclude="/home/$USER/snap/" /home/$USER/ /media/$USER/SSD128FAT32/backup_pc_portable/ 
+			rsync -a --delete   --exclude="snap/" --exclude=".local/" \
+			  --exclude=".arduino15" --exclude=".arduinoIDE" \
+			  --exclude=".cache/" --exclude=".config/" \
+			  --exclude=".deepin-screen-recorder" \
+			  --exclude=".dotnet" --exclude=".eclipse" \
+			  --exclude=".fonts" --exclude=".gervill" \
+			  --exclude=".gnome" --exclude=".gphoto" \
+			  --exclude=".gradle" --exclude=".java" \
+			  --exclude=".lives-dir" --exclude=".mplayer" \
+			  --exclude=".netbeans" --exclude=".npm" \
+			  --exclude=".nuget" --exclude=".oracle_jre_usage" \
+			  --exclude=".p2" --exclude=".pki" --exclude=".purple" \
+			  --exclude=".putty" --exclude=".pydev" \
+			  --exclude=".snap" --exclude=".ssr" \
+			  --exclude=".swt" --exclude=".traverso" \
+			  --exclude=".wine" --exclude=".xournal" \
+			  --exclude="snap/" --exclude=".wine" \
+			  /home/$USER/ /media/$USER/SSD128FAT32/backup_pc_portable/ 
 			echo "##########################"
 			echo "### fin de la sauvegarde #"
 			echo "##########################"
