@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "===arret du service au démarrage==="
-sudo update-rc.d -f $1 remove
+sudo systemctl disable $1
 echo "===fin==="
