@@ -1,0 +1,41 @@
+#!/bin/bash
+# 18/02/2024
+# ce script modifie la date "de mofication" par la "date de la prise" Exif "Image timestamp"
+# 16/06/2024 fichier a placer dans ~/.local/share/nemo/scripts ce qui fera apparaitre le menu clic-droit>Script>maj_date_jpg
+
+notify-send "Traitement en cours..."
+
+while IFS= read -r selected_uri
+do
+	[[ -z "$selected_uri" ]] && continue
+
+	notify-send "selected url : $selected_uri"
+
+	MIME_TYPE=$(mimetype -b "$selected_uri")
+	notify-send "mimetype : $MIME_TYPE"
+
+	if [ "$MIME_TYPE" = "image/jpeg" ]
+	then
+		time=$(exiv2 "$selected_uri" | grep timestamp | cut -d " " -f5)
+		date=$(exiv2 "$selected_uri" | grep timestamp | cut -d " " -f4)
+
+		if [[ -z "$time" ]]
+		then
+			notify-send "date non renseignée"
+		else
+			date=${date//:/-}
+			datetime="${date} ${time}"
+
+			OFFSET=$(date -d "$datetime" '+%:z')
+			touch -d "${datetime}${OFFSET}" "$selected_uri"
+
+			notify-send "date de modification du fichier modifiée"
+		fi
+	else
+		notify-send "Un fichier n'est pas au format jpg"
+		exit 0
+	fi
+
+done <<< "$NEMO_SCRIPT_SELECTED_FILE_PATHS"
+notify-send "Fin du traitement"
+
